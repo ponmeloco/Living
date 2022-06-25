@@ -21,22 +21,24 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
+
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+val homeViewModel =
+    ViewModelProvider(this)[HomeViewModel::class.java]
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
-    }
+_binding = FragmentHomeBinding.inflate(inflater, container, false)
+val root: View = binding.root
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+val textView: TextView = binding.textViewYourName
+homeViewModel.text.observe(viewLifecycleOwner) {
+    textView.text = it
+}
+return root
+}
+
+override fun onDestroyView() {
+super.onDestroyView()
+_binding = null
+}
 }

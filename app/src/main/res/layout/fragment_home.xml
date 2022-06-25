@@ -4,19 +4,202 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    android:orientation="vertical"
+    android:layout_marginBottom="70dp"
+    tools:context=".ui.home.HomeFragment" >
 
     <TextView
-        android:id="@+id/text_home"
+        android:id="@+id/textViewYourName"
+        android:text="@string/your_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="35dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    </TextView>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutYourName"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@id/textViewYourName"
+        tools:layout_editor_absoluteX="0dp">
+
+        <EditText
+            android:hint="@string/your_name"
+            android:id="@+id/editTextViewYourName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/angela_merkel"
+            android:autofillHints="Your Name"
+            android:inputType="textPersonName"/>
+
+
+        <Button
+            android:id="@+id/YourNameEditButton"
+            android:text="@string/edit"
+            android:textAllCaps="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <TextView
+        android:id="@+id/textViewYourEmail"
+        android:text="@string/your_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutYourName">
+    </TextView>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutYourEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/textViewYourEmail">
+
+        <EditText
+            android:hint="@string/your_email"
+            android:id="@+id/editTextViewYourEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/angie_email"
+            android:autofillHints="Your Email"
+            android:inputType="textEmailAddress" />
+
+        <Button
+            android:text="@string/edit"
+            android:textAllCaps="false"
+            android:id="@+id/YourEmailEditButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutGroups"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutYourEmail"
+>
+
+        <TextView
+            android:id="@+id/textViewGroupsYouAre"
+            android:text="@string/groups_you_are_part_of"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="start"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:layout_width="55dp"
+            android:layout_height="50dp"
+            android:textAllCaps="false"
+            android:background="@android:drawable/ic_dialog_email"
+            android:contentDescription="@string/pending_email_invite" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ScrollView
+        android:id="@+id/scrollViewGroups"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/mimosaYellow"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutInviteLeave"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutGroups" >
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/scrollViewLinearLayout"
+            android:orientation="vertical"
+            android:gravity="top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutInviteLeave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCleaningGroceries">
+
+        <Button
+            android:id="@+id/inviteButton"
+            android:text="@string/invite_member"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="100dp"
+            android:layout_weight="1">
+        </Button>
+
+        <Button
+            android:id="@+id/leaveButton"
+            android:text="@string/leave_group"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2">
+        </Button>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutCleaningGroceries"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/cleaningButton"
+            android:text="@string/cleaning"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <Button
+            android:id="@+id/groceriesButton"
+            android:text="@string/groceries"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/button13"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

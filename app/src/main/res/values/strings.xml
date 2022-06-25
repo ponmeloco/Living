@@ -17,4 +17,15 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="logout">Logout</string>
+    <string name="pending_email_invite">Pending Email invite</string>
+    <string name="angela_merkel">Angela Merkel</string>
+    <string name="angie_email">angie@bundestag.de</string>
+    <string name="edit">Edit</string>
+    <string name="invite_member">Invite member</string>
+    <string name="leave_group">Leave Group</string>
+    <string name="cleaning">Cleaning</string>
+    <string name="groceries">Groceries</string>
+    <string name="your_name">Your Name</string>
+    <string name="your_email">Your Email</string>
+    <string name="groups_you_are_part_of">Groups you are part of</string>
 </resources>
