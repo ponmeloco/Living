@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Living</string>
+    <string name="todo">TODO</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_up_description_text">Enter your name, email id and password, to register with us.</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="image_contentDescription">Content description</string>
+    <string name="let_s_get_started_text">Lets get started</string>
+    <string name="intro_text_description">If you are not already registered go ahead and register yourself! </string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_in_description_text">Enter your name, email id and password, to login.</string>
+    <string name="please_wait">please wait</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="logout">Logout</string>
+</resources>

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "534333411945",
+    "project_id": "living-a7696",
+    "storage_bucket": "living-a7696.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:534333411945:android:6116a2e5f7e4e1197808f8",
+        "android_client_info": {
+          "package_name": "de.living"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "534333411945-gtte7e7hj3j1j2sm5flvptulovqlfrv3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAI_18m06P1kcXb6uGwD_nlrEAFHVyHM1o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "534333411945-gtte7e7hj3j1j2sm5flvptulovqlfrv3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
