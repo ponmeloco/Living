@@ -4,15 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import de.living.MainActivity
 import de.living.R
 
 
 @SuppressLint("CustomSplashScreen")
-@Suppress("DEPRECATION")
 class SplashActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
@@ -21,7 +20,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
         auth = FirebaseAuth.getInstance()
 
-        Handler().postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
             if(auth.currentUser != null) {
                 auth.currentUser?.reload()?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
