@@ -1,13 +1,14 @@
-package de.living.ui.settings
+package de.living.ui.cleaning
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 
-class SettingsViewModel : ViewModel() {
+class CleaningViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
+        value = FirebaseAuth.getInstance().currentUser?.uid
     }
     val text: LiveData<String> = _text
 }

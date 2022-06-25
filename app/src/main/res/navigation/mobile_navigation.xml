@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="de.living.ui.dashboard.DashboardFragment"
+        android:name="de.living.ui.cleaning.CleaningFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_cleaning" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="de.living.ui.settings.SettingsFragment"
+        android:name="de.living.ui.settings.GroceriesFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_groceries" />
 </navigation>

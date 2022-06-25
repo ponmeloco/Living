@@ -1,14 +1,13 @@
-package de.living.ui.dashboard
+package de.living.ui.settings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
 
-class DashboardViewModel : ViewModel() {
+class GroceriesViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = FirebaseAuth.getInstance().currentUser?.uid
+        value = "This is notifications Fragment"
     }
     val text: LiveData<String> = _text
 }

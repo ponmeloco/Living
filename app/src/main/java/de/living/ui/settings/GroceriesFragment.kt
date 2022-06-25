@@ -8,18 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import de.living.MainActivity
-import de.living.databinding.FragmentSettingsBinding
+import de.living.databinding.FragmentGroceriesBinding
 import de.living.startup.IntroActivity
 
-class SettingsFragment : Fragment() {
+class GroceriesFragment : Fragment() {
 
-    private var _binding: FragmentSettingsBinding? = null
+    private var _binding: FragmentGroceriesBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -31,9 +29,9 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val settingsViewModel =
-            ViewModelProvider(this).get(SettingsViewModel::class.java)
+            ViewModelProvider(this)[GroceriesViewModel::class.java]
 
-        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        _binding = FragmentGroceriesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val logoutButton: Button = binding.logoutButton
@@ -57,7 +55,7 @@ class SettingsFragment : Fragment() {
 
 
         }
-        val textView: TextView = binding.textSettings
+        val textView: TextView = binding.textGroceries
         settingsViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
