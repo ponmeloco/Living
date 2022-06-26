@@ -53,7 +53,7 @@ class SignUpActivity : AppCompatActivity() {
                     "name" to name,
                     "email" to email,
                     "uid" to uid,
-                    "debts" to null
+                    "debts" to 0
                 )
 
                 if (uid != null) {

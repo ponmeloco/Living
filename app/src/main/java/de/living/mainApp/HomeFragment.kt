@@ -37,7 +37,7 @@ class HomeFragment : Fragment() {
 
 
         binding.createGroupButton.setOnClickListener {
-                buttonEffect(binding.createGroupButton)
+            buttonEffect(binding.createGroupButton)
         }
         binding.leaveButton.setOnClickListener {
             buttonEffect(binding.leaveButton)
@@ -56,8 +56,8 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    @Suppress("DEPRECATION")
+
+    @Suppress("DEPRECATION","ClickableViewAccessibility")
     fun buttonEffect(button: View) {
         button.setOnTouchListener { v, event ->
             when (event.action) {
