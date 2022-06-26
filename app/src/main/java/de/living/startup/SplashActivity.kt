@@ -7,7 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import de.living.MainActivity
+import de.living.mainApp.MainActivity
 import de.living.databinding.ActivitySplashBinding
 
 

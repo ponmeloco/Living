@@ -28,4 +28,6 @@
     <string name="your_name">Your Name</string>
     <string name="your_email">Your Email</string>
     <string name="groups_you_are_part_of">Groups you are part of</string>
+    <string name="group_name">Group Name</string>
+    <string name="create_group">Create Group</string>
 </resources>

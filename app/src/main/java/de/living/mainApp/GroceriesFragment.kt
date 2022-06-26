@@ -1,4 +1,4 @@
-package de.living.ui.settings
+package de.living.mainApp
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -9,11 +9,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import de.living.databinding.FragmentGroceriesBinding
 import de.living.startup.IntroActivity
+import de.living.viewmodel.UserDataViewModel
 
 class GroceriesFragment : Fragment() {
 
@@ -22,42 +23,25 @@ class GroceriesFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private val _userDataViewModel: UserDataViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val settingsViewModel =
-            ViewModelProvider(this)[GroceriesViewModel::class.java]
 
         _binding = FragmentGroceriesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val logoutButton: Button = binding.logoutButton
-        val auth = Firebase.auth
+
         logoutButton.setOnClickListener {
-            val alertDialog = AlertDialog.Builder(activity)
-
-            alertDialog.apply {
-                setMessage("Wanted to logout?")
-                setPositiveButton("Yes!") { _, _ ->
-                    if(auth.currentUser != null)run {
-                        auth.signOut()
-                        startActivity(Intent(activity, IntroActivity::class.java))
-                        activity?.finishAffinity()
-                    }
-                }
-                setNegativeButton("No!") { _, _ ->
-
-                }
-            }.create().show()
-
-
+            logout()
         }
         val textView: TextView = binding.textGroceries
-        settingsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        _userDataViewModel.getUser().observe(viewLifecycleOwner) {
+            textView.text = _userDataViewModel.getUser().value?.name
         }
         return root
     }
@@ -65,5 +49,22 @@ class GroceriesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    private fun logout(){
+        val alertDialog = AlertDialog.Builder(activity)
+        val auth = Firebase.auth
+        alertDialog.apply {
+            setMessage("Wanted to logout?")
+            setPositiveButton("Yes!") { _, _ ->
+                if(auth.currentUser != null)run {
+                    auth.signOut()
+                    startActivity(Intent(activity, IntroActivity::class.java))
+                    activity?.finishAffinity()
+                }
+            }
+            setNegativeButton("No!") { _, _ ->
+            }
+        }.create().show()
+
     }
 }

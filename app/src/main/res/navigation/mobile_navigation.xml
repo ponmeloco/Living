@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="de.living.ui.home.HomeFragment"
+        android:name="de.living.mainApp.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="de.living.ui.cleaning.CleaningFragment"
+        android:name="de.living.mainApp.CleaningFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_cleaning" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="de.living.ui.settings.GroceriesFragment"
+        android:name="de.living.mainApp.GroceriesFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_groceries" />
 </navigation>

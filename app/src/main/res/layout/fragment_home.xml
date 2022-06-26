@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_marginBottom="70dp"
-    tools:context=".ui.home.HomeFragment" >
+    tools:context=".mainApp.HomeFragment" >
 
     <TextView
         android:id="@+id/textViewYourName"
@@ -30,22 +30,24 @@
         tools:layout_editor_absoluteX="0dp">
 
         <EditText
-            android:hint="@string/your_name"
             android:id="@+id/editTextViewYourName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/angela_merkel"
             android:autofillHints="Your Name"
-            android:inputType="textPersonName"/>
+            android:hint="@string/your_name"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:text="@string/angela_merkel" />
 
 
         <Button
             android:id="@+id/YourNameEditButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/edit"
             android:textAllCaps="false"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            tools:ignore="DuplicateSpeakableTextCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <TextView
@@ -69,21 +71,23 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewYourEmail">
 
         <EditText
-            android:hint="@string/your_email"
             android:id="@+id/editTextViewYourEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/angie_email"
             android:autofillHints="Your Email"
-            android:inputType="textEmailAddress" />
+            android:hint="@string/your_email"
+            android:inputType="textEmailAddress"
+            android:minHeight="48dp"
+            android:text="@string/angie_email" />
 
         <Button
-            android:text="@string/edit"
-            android:textAllCaps="false"
             android:id="@+id/YourEmailEditButton"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="@string/edit"
+            android:textAllCaps="false"
+            tools:ignore="TouchTargetSizeCheck" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
@@ -109,33 +113,29 @@
             android:layout_weight="1" />
 
         <ImageButton
+            android:id="@+id/pending_invites_button"
             android:layout_width="55dp"
             android:layout_height="50dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/email"
+            android:contentDescription="@string/pending_email_invite"
             android:textAllCaps="false"
-            android:background="@android:drawable/ic_dialog_email"
-            android:contentDescription="@string/pending_email_invite" />
+            tools:ignore="ImageContrastCheck" />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <ScrollView
-        android:id="@+id/scrollViewGroups"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listViewGroups"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/mimosaYellow"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayoutInviteLeave"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayoutGroups" >
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutGroups"
+        tools:layout_editor_absoluteX="30dp">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/scrollViewLinearLayout"
-            android:orientation="vertical"
-            android:gravity="top"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-    </ScrollView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -144,29 +144,40 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="20dp"
         android:gravity="center"
         android:orientation="horizontal"
-
         app:layout_constraintBottom_toTopOf="@+id/linearLayoutCleaningGroceries">
 
         <Button
             android:id="@+id/inviteButton"
-            android:text="@string/invite_member"
+            android:background="@drawable/invite_member"
             android:textAllCaps="false"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="100dp"
-            android:layout_weight="1">
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp">
+        </Button>
+
+        <Button
+            android:id="@+id/createGroupButton"
+            android:textAllCaps="false"
+
+            android:background="@drawable/create_group"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp">
         </Button>
 
         <Button
             android:id="@+id/leaveButton"
-            android:text="@string/leave_group"
             android:textAllCaps="false"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2">
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/leave_group"
+            android:layout_width="50dp"
+            android:layout_height="50dp">
         </Button>
 
     </androidx.appcompat.widget.LinearLayoutCompat>

@@ -44,7 +44,7 @@
             android:screenOrientation="fullSensor"
             android:theme="@style/Theme.NoActionBarStartup" />
         <activity
-            android:name=".MainActivity"
+            android:name=".mainApp.MainActivity"
             android:exported="false"
             android:label="@string/title_activity_main"
             android:screenOrientation="fullSensor"
