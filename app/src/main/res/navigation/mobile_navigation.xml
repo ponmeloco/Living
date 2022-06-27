@@ -14,12 +14,12 @@
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="de.living.mainApp.CleaningFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/title_cleaning"
         tools:layout="@layout/fragment_cleaning" />
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="de.living.mainApp.GroceriesFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/title_groceries"
         tools:layout="@layout/fragment_groceries" />
 </navigation>

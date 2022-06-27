@@ -14,8 +14,8 @@
     <string name="please_wait">please wait</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_cleaning">Cleaning</string>
+    <string name="title_groceries">Groceries</string>
     <string name="logout">Logout</string>
     <string name="pending_email_invite">Pending Email invite</string>
     <string name="angela_merkel">Angela Merkel</string>
@@ -30,4 +30,6 @@
     <string name="groups_you_are_part_of">Groups you are part of</string>
     <string name="group_name">Group Name</string>
     <string name="create_group">Create Group</string>
+    <string name="save">Save</string>
+    <string name="item">Item</string>
 </resources>

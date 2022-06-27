@@ -16,7 +16,7 @@ import de.living.databinding.ActivitySignInBinding
 
 class SignInActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    lateinit var binding: ActivitySignInBinding
+    private lateinit var binding: ActivitySignInBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

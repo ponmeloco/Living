@@ -30,7 +30,7 @@ class GroceriesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+        _userDataViewModel.getUserData()
         _binding = FragmentGroceriesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
