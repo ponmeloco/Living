@@ -10,13 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.living.databinding.FragmentHomeBinding
 import de.living.viewmodel.UserDataViewModel
 import de.living.adapter.AdapterRecyclerViewGroups
-import de.living.model.GroupsList
 
 
 class HomeFragment : Fragment() {
@@ -46,7 +46,6 @@ class HomeFragment : Fragment() {
         }
         inflateRecyclerview()
 
-
         binding.YourNameEditButton.setOnClickListener{
             binding.YourNameEditButton.hideKeyboard()
             _userDataViewModel.updateUserName(editTextViewName.text.toString())
@@ -60,9 +59,21 @@ class HomeFragment : Fragment() {
 
         binding.createGroupButton.setOnClickListener {
             buttonEffect(binding.createGroupButton)
+            _userDataViewModel.createGroup("lamiaa")
+            inflateRecyclerview()
         }
         binding.leaveButton.setOnClickListener {
-            buttonEffect(binding.leaveButton)
+            if(selectedItem != 0) {
+                buttonEffect(binding.leaveButton)
+                _userDataViewModel.leaveGroup(
+                    _userDataViewModel.getGroups().value?.group?.get(
+                        selectedItem
+                    )
+                )
+                _userDataViewModel.getGroups().value?.group?.removeAt(selectedItem)
+                inflateRecyclerview()
+            }
+            selectedItem = 0
         }
         binding.inviteButton.setOnClickListener {
             buttonEffect(binding.inviteButton)
@@ -86,12 +97,10 @@ class HomeFragment : Fragment() {
         recyclerview.layoutManager = LinearLayoutManager(binding.listViewGroups.context)
 
         // ArrayList of class ItemsViewModel
-        val data = ArrayList<GroupsList>()
-
-         for (i in 1..2) {
-             _userDataViewModel.getGroups().value?.let { GroupsList(it.Gruppe1) }
-                 ?.let { data.add(it) }
-         }
+        val data = ArrayList<String>()
+             for (item in _userDataViewModel.getGroups().value?.group!!) {
+                 _userDataViewModel.getGroups().value!!.group?.let { data.add(item) }
+             }
 
         // This will pass the ArrayList to our Adapter
         val adapter = AdapterRecyclerViewGroups(data)
@@ -99,6 +108,7 @@ class HomeFragment : Fragment() {
              override fun setOnClickListener(pos: Int) {
                  if(recyclerview.getChildAt(pos).isActivated){
                      recyclerview.getChildAt(pos).isActivated = false
+                     selectedItem = 0
                  }else {
                      recyclerview.getChildAt(selectedItem).isActivated = false
                      selectedItem = pos

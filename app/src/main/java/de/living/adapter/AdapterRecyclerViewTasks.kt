@@ -9,7 +9,7 @@ import de.living.R
 import de.living.model.GroupsList
 
 
-class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<GroupsList>) : RecyclerView.Adapter<AdapterRecyclerViewTasks.ViewHolder>() {
+class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<String>) : RecyclerView.Adapter<AdapterRecyclerViewTasks.ViewHolder>() {
 
     private lateinit var mListener: OnItemClickListener
     // create new views
@@ -25,9 +25,9 @@ class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<GroupsList>)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val tasks = userTasksList[position]
         // sets the text to the textview from our itemHolder class
-        holder.textViewTask.text = tasks.Gruppe1
-        holder.textViewRotation.text = tasks.Gruppe1
-        holder.textViewTimeRemaining.text = tasks.Gruppe1
+        holder.textViewTask.text = tasks
+        holder.textViewRotation.text = tasks
+        holder.textViewTimeRemaining.text = tasks
 
     }
 

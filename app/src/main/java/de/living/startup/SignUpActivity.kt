@@ -12,7 +12,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import de.living.mainApp.MainActivity
 import de.living.R
 import de.living.databinding.ActivitySignUpBinding
 
@@ -39,8 +38,8 @@ class SignUpActivity : AppCompatActivity() {
         val email = binding.etEmail.text.toString()
         val pass = binding.etPassword.text.toString()
         val name = binding.etName.text.toString()
-        if (email.isBlank() || pass.isBlank() ) {
-            Toast.makeText(this, "Email and Password can't be blank", Toast.LENGTH_SHORT).show()
+        if (email.isBlank() || pass.isBlank() || name.isBlank() ) {
+            Toast.makeText(this, "Please fill out all fields", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -53,19 +52,24 @@ class SignUpActivity : AppCompatActivity() {
                     "name" to name,
                     "email" to email,
                     "uid" to uid,
-                    "debts" to 0
                 )
+
+                val groupName: MutableMap<String, Any> = HashMap()
+                groupName["group"] = listOf("Your Group")
 
                 if (uid != null) {
                     db.collection("users").document(uid).set(user)
                         .addOnSuccessListener {
                             Log.d(TAG, "DocumentSnapshot added with ID: $uid")
+
                         }
                         .addOnFailureListener { e ->
                             Log.w(TAG, "Error adding document", e)
                         }
+                    db.collection("users").document(uid).collection("groups").document("groupNames").set(groupName)
+                    db.collection("groups").document(email).set(groupName)
                     Toast.makeText(this, "Successfully Singed Up", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this@SignUpActivity, MainActivity::class.java))
+                    startActivity(Intent(this@SignUpActivity, IntroActivity::class.java))
                     ActivityCompat.finishAffinity(this)
                 }
             } else {

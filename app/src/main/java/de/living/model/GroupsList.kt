@@ -1,3 +1,3 @@
 package de.living.model
 
-data class GroupsList(var Gruppe1: String = "")
+data class GroupsList(var group: ArrayList<String>? = null)

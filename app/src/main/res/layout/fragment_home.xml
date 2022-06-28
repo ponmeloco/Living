@@ -108,13 +108,16 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/listViewGroupsLinearLayout"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constrainedHeight="true"
         android:gravity="top"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayoutGroups">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutInviteLeave"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayoutGroups"
+        tools:layout_editor_absoluteX="20dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/listViewGroups"

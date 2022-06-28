@@ -7,13 +7,11 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.living.adapter.AdapterRecyclerViewTasks
 import de.living.databinding.FragmentCleaningBinding
-import de.living.model.GroupsList
 import de.living.viewmodel.UserDataViewModel
 
 
@@ -55,12 +53,12 @@ class CleaningFragment : Fragment() {
         recyclerview.layoutManager = LinearLayoutManager(binding.recyclerViewTasks.context)
 
         // ArrayList of class ItemsViewModel
-        val data = ArrayList<GroupsList>()
+        val data = ArrayList<String>()
 
-        for (i in 1..10) {
-            _userDataViewModel.getGroups().value?.let { GroupsList(it.Gruppe1) }
-                ?.let { data.add(it) }
+        for (item in _userDataViewModel.getGroups().value?.group!!) {
+            _userDataViewModel.getGroups().value!!.group?.let { data.add(item) }
         }
+
         // This will pass the ArrayList to our Adapter
         val adapter = AdapterRecyclerViewTasks(data)
 
@@ -87,7 +85,7 @@ class CleaningFragment : Fragment() {
         val groupNames = ArrayList<String?>()
 
         for (i in 1..5) {
-            groupNames.add(_userDataViewModel.getGroups().value?.Gruppe1)
+            groupNames.add(_userDataViewModel.getGroups().value?.group)
             val adapter = this@CleaningFragment.context?.let {
                 ArrayAdapter(
                     it,

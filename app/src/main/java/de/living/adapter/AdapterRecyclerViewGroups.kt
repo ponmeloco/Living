@@ -9,7 +9,7 @@ import de.living.R
 import de.living.model.GroupsList
 
 
-class AdapterRecyclerViewGroups(private val userGroupList: ArrayList<GroupsList>) : RecyclerView.Adapter<AdapterRecyclerViewGroups.ViewHolder>() {
+class AdapterRecyclerViewGroups(private val userGroupList: ArrayList<String>) : RecyclerView.Adapter<AdapterRecyclerViewGroups.ViewHolder>() {
 
     private lateinit var mListener: OnItemClickListener
     // create new views
@@ -25,7 +25,7 @@ class AdapterRecyclerViewGroups(private val userGroupList: ArrayList<GroupsList>
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = userGroupList[position]
         // sets the text to the textview from our itemHolder class
-        holder.textViewGroupName.text = user.Gruppe1
+        holder.textViewGroupName.text = user
 
     }
 
