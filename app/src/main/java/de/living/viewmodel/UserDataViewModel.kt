@@ -13,8 +13,8 @@ import de.living.model.User
 
 class UserDataViewModel : ViewModel() {
     private val mFireStore = FirebaseFirestore.getInstance()
-    private var _user: MutableLiveData<User> = MutableLiveData<User>()
-    private var _userGroupsList: MutableLiveData<GroupsList> = MutableLiveData<GroupsList>()
+    private var _user: MutableLiveData<User> =  MutableLiveData<User>()
+    private var _userGroupsList: MutableLiveData<GroupsList> =   MutableLiveData<GroupsList>()
 
     fun getUser(): LiveData<User> {
         return _user
@@ -28,7 +28,7 @@ class UserDataViewModel : ViewModel() {
         return FirebaseAuth.getInstance().currentUser!!.uid
     }
 
-    fun getUserData() {
+    private fun getUserData() {
         val docRef = mFireStore.collection("users").document(getCurrentUserId())
         docRef.get()
             .addOnSuccessListener { document ->
@@ -44,7 +44,7 @@ class UserDataViewModel : ViewModel() {
             }
     }
 
-    fun getUserGroups() {
+    private fun getUserGroups() {
         val docRef = mFireStore.collection("users").document(getCurrentUserId())
             .collection("groups")
             .document("groupNames")
@@ -61,4 +61,11 @@ class UserDataViewModel : ViewModel() {
                 Log.d(ContentValues.TAG, "get failed with ", exception)
             }
     }
+
+    fun init(){
+        getUserGroups()
+        getUserData()
+    }
+
+
 }

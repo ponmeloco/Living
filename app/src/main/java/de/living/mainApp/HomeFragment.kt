@@ -13,7 +13,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.living.databinding.FragmentHomeBinding
 import de.living.viewmodel.UserDataViewModel
-import de.living.adapter.MyAdapter
+import de.living.adapter.AdapterRecyclerViewGroups
+import de.living.adapter.AdapterRecyclerViewTasks
 import de.living.model.GroupsList
 
 
@@ -34,9 +35,6 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
 
     ): View {
-
-        _userDataViewModel.getUserGroups()
-        _userDataViewModel.getUserData()
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
 
@@ -100,10 +98,17 @@ class HomeFragment : Fragment() {
         // ArrayList of class ItemsViewModel
         val data = ArrayList<GroupsList>()
 
-         _userDataViewModel.getGroups().value?.let { GroupsList(it.Gruppe1) }?.let { data.add(it) }
+         for (i in 1..10) {
+             _userDataViewModel.getGroups().value?.let { GroupsList(it.Gruppe1) }
+                 ?.let { data.add(it) }
+         }
 
         // This will pass the ArrayList to our Adapter
-        val adapter = MyAdapter(data)
+        val adapter = AdapterRecyclerViewGroups(data)
+         adapter.setOnItemClickListener(object : AdapterRecyclerViewGroups.OnItemClickListener{
+             override fun setOnClickListener(pos: Int) {
+             }
+         })
 
         // Setting the Adapter with the recyclerview
         recyclerview.adapter = adapter

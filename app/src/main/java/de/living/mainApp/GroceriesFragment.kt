@@ -30,7 +30,7 @@ class GroceriesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _userDataViewModel.getUserData()
+
         _binding = FragmentGroceriesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -39,10 +39,8 @@ class GroceriesFragment : Fragment() {
         logoutButton.setOnClickListener {
             logout()
         }
-        val textView: TextView = binding.textGroceries
-        _userDataViewModel.getUser().observe(viewLifecycleOwner) {
-            textView.text = _userDataViewModel.getUser().value?.name
-        }
+        binding.textGroceries.text = "Welcome to Living!"
+
         return root
     }
 
@@ -50,6 +48,7 @@ class GroceriesFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
     private fun logout(){
         val alertDialog = AlertDialog.Builder(activity)
         val auth = Firebase.auth

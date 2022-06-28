@@ -3,7 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_groceries">
+
+    <fragment
+        android:id="@+id/navigation_groceries"
+        android:name="de.living.mainApp.GroceriesFragment"
+        android:label="@string/title_groceries"
+        tools:layout="@layout/fragment_groceries" />
 
     <fragment
         android:id="@+id/navigation_home"
@@ -12,14 +18,10 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_cleaning"
         android:name="de.living.mainApp.CleaningFragment"
         android:label="@string/title_cleaning"
         tools:layout="@layout/fragment_cleaning" />
 
-    <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="de.living.mainApp.GroceriesFragment"
-        android:label="@string/title_groceries"
-        tools:layout="@layout/fragment_groceries" />
+
 </navigation>

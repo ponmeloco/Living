@@ -32,4 +32,7 @@
     <string name="create_group">Create Group</string>
     <string name="save">Save</string>
     <string name="item">Item</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="more_info_button">More Info</string>
+    <string name="add_task">Add Task</string>
 </resources>
