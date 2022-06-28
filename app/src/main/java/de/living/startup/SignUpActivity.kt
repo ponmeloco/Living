@@ -35,7 +35,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun signUpUser() {
-        val email = binding.etEmail.text.toString()
+        val email = binding.etEmail.text.toString().lowercase()
         val pass = binding.etPassword.text.toString()
         val name = binding.etName.text.toString()
         if (email.isBlank() || pass.isBlank() || name.isBlank() ) {
@@ -55,10 +55,10 @@ class SignUpActivity : AppCompatActivity() {
                 )
 
                 val groupName: MutableMap<String, Any> = HashMap()
-                groupName["group"] = listOf("Your Group")
+                groupName["groupNames"] = listOf("Your Group")
 
                 if (uid != null) {
-                    db.collection("users").document(uid).set(user)
+                    db.collection("users").document(email).set(user)
                         .addOnSuccessListener {
                             Log.d(TAG, "DocumentSnapshot added with ID: $uid")
 
@@ -66,8 +66,10 @@ class SignUpActivity : AppCompatActivity() {
                         .addOnFailureListener { e ->
                             Log.w(TAG, "Error adding document", e)
                         }
-                    db.collection("users").document(uid).collection("groups").document("groupNames").set(groupName)
-                    db.collection("groups").document(email).set(groupName)
+                    db.collection("users").document(email).collection("groups").document("groupNames").set(groupName)
+                    groupName.clear()
+                    groupName["user"] = listOf(email)
+                    db.collection("groups").document(email+"ownGroup").set(groupName)
                     Toast.makeText(this, "Successfully Singed Up", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this@SignUpActivity, IntroActivity::class.java))
                     ActivityCompat.finishAffinity(this)

@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.living.R
-import de.living.model.GroupsList
 
 
 class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<String>) : RecyclerView.Adapter<AdapterRecyclerViewTasks.ViewHolder>() {
@@ -37,7 +36,7 @@ class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<String>) : R
     }
 
     // Holds the views for adding it to image and text
-    class ViewHolder(itemView: View, var mListener:OnItemClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class ViewHolder(itemView: View, private var mListener:OnItemClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val textViewTask: TextView = itemView.findViewById(R.id.textViewTask)
         val textViewRotation: TextView = itemView.findViewById(R.id.textViewRotation)
         val textViewTimeRemaining: TextView = itemView.findViewById(R.id.textViewTimeRemaining)

@@ -32,7 +32,7 @@ class SignInActivity : AppCompatActivity() {
     }
 
     private fun login() {
-        val email = binding.etEmail.text.toString()
+        val email = binding.etEmail.text.toString().lowercase()
         val pass = binding.etPassword.text.toString()
         auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(this) {
             if (it.isSuccessful) {

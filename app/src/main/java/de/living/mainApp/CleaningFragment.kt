@@ -55,8 +55,8 @@ class CleaningFragment : Fragment() {
         // ArrayList of class ItemsViewModel
         val data = ArrayList<String>()
 
-        for (item in _userDataViewModel.getGroups().value?.group!!) {
-            _userDataViewModel.getGroups().value!!.group?.let { data.add(item) }
+        for (item in _userDataViewModel.getGroups().value?.groupNames!!) {
+            _userDataViewModel.getGroups().value!!.groupNames?.let { data.add(item) }
         }
 
         // This will pass the ArrayList to our Adapter

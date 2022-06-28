@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.living.R
-import de.living.model.GroupsList
 
 
 class AdapterRecyclerViewGroups(private val userGroupList: ArrayList<String>) : RecyclerView.Adapter<AdapterRecyclerViewGroups.ViewHolder>() {

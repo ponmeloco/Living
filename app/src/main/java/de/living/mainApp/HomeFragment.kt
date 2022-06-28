@@ -14,9 +14,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import de.living.EditTextDialog
+import de.living.adapter.AdapterRecyclerViewGroups
 import de.living.databinding.FragmentHomeBinding
 import de.living.viewmodel.UserDataViewModel
-import de.living.adapter.AdapterRecyclerViewGroups
 
 
 class HomeFragment : Fragment() {
@@ -59,24 +60,44 @@ class HomeFragment : Fragment() {
 
         binding.createGroupButton.setOnClickListener {
             buttonEffect(binding.createGroupButton)
-            _userDataViewModel.createGroup("lamiaa")
-            inflateRecyclerview()
+            val dialog = EditTextDialog.newInstance(text = "", hint = "Group Name", isMultiline = false)
+            dialog.onOk = {
+                _userDataViewModel.createGroup(dialog.editText.text)
+                inflateRecyclerview()
+            }
+            dialog.show(parentFragmentManager, "editDescription")
         }
         binding.leaveButton.setOnClickListener {
             if(selectedItem != 0) {
                 buttonEffect(binding.leaveButton)
                 _userDataViewModel.leaveGroup(
-                    _userDataViewModel.getGroups().value?.group?.get(
+                    _userDataViewModel.getGroups().value?.groupNames?.get(
                         selectedItem
                     )
                 )
-                _userDataViewModel.getGroups().value?.group?.removeAt(selectedItem)
+                _userDataViewModel.getGroups().value?.groupNames?.removeAt(selectedItem)
                 inflateRecyclerview()
+            } else{
+            Toast.makeText(activity,"No group selected", Toast.LENGTH_SHORT).show()
             }
             selectedItem = 0
         }
         binding.inviteButton.setOnClickListener {
             buttonEffect(binding.inviteButton)
+            if(selectedItem != 0) {
+                val dialog =
+                    EditTextDialog.newInstance(text = "", hint = "E-Mail", isMultiline = false)
+                dialog.onOk = {
+                    _userDataViewModel.getGroups().value?.groupNames?.let { it1 ->
+                        _userDataViewModel.addToGroup(
+                            it1[selectedItem],  dialog.editText.text
+                        )
+                    }
+                }
+                dialog.show(parentFragmentManager, "editDescription")
+            }else{
+                Toast.makeText(activity,"No group selected", Toast.LENGTH_SHORT).show()
+            }
         }
         binding.pendingInvitesButton.setOnClickListener {
             buttonEffect(binding.pendingInvitesButton)
@@ -98,8 +119,8 @@ class HomeFragment : Fragment() {
 
         // ArrayList of class ItemsViewModel
         val data = ArrayList<String>()
-             for (item in _userDataViewModel.getGroups().value?.group!!) {
-                 _userDataViewModel.getGroups().value!!.group?.let { data.add(item) }
+             for (item in _userDataViewModel.getGroups().value?.groupNames!!) {
+                 _userDataViewModel.getGroups().value!!.groupNames?.let { data.add(item) }
              }
 
         // This will pass the ArrayList to our Adapter
@@ -139,7 +160,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    fun View.hideKeyboard() {
+    private fun View.hideKeyboard() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
     }

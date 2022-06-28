@@ -1,6 +1,7 @@
 package de.living.viewmodel
 
 import android.content.ContentValues.TAG
+import android.text.Editable
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,8 +13,8 @@ import com.google.firebase.firestore.ktx.toObject
 import de.living.model.GroupsList
 import de.living.model.GroupsNamesList
 import de.living.model.User
-import kotlin.collections.HashMap
 
+@Suppress("unused")
 class UserDataViewModel : ViewModel() {
     private val mFireStore = FirebaseFirestore.getInstance()
     private var _user: MutableLiveData<User> =  MutableLiveData<User>()
@@ -29,10 +30,6 @@ class UserDataViewModel : ViewModel() {
         _user.value?.email  = string
     }
 
-    fun getGroupMemberNames(): LiveData<ArrayList<String>>{
-        return _groupsNamesList
-    }
-
     fun getUser(): LiveData<User> {
         return _user
     }
@@ -41,74 +38,64 @@ class UserDataViewModel : ViewModel() {
         return _userGroupsList
     }
 
-    private fun setGroup(s: String){
-        _userGroupsList.value?.group?.add(s)
+    private fun setGroup(s: Editable){
+        _userGroupsList.value?.groupNames?.add(s.toString())
     }
 
-    fun getGroupMemberUID(s: String){
-        val docRef = mFireStore.collection("groups").document(s)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                    _groupsNamesUid = MutableLiveData(document.toObject<GroupsNamesList>()!!)
-                } else {
-                    Log.d(TAG, "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
-            }
-    }
+
     fun leaveGroup(s: String?){
         if (s != null) {
                 mFireStore.collection("groups").document(s)
-                    .update("User", FieldValue.arrayRemove(getUser().value?.uid)).addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+                    .update("user", FieldValue.arrayRemove(getUser().value?.email)).addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
                     .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
-                mFireStore.collection("users").document(getCurrentUserId()).collection("groups").document("groupNames")
-                    .update("group", FieldValue.arrayRemove(s)).addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+            getCurrentUserEmail()?.let {
+                mFireStore.collection("users").document(it).collection("groups").document("groupNames")
+                    .update("groupNames", FieldValue.arrayRemove(s)).addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
                     .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+            }
         }
-
     }
 
     private fun getCurrentUserId(): String {
         return FirebaseAuth.getInstance().currentUser!!.uid
     }
 
+    private fun getCurrentUserEmail(): String? {
+        return FirebaseAuth.getInstance().currentUser!!.email
+    }
+
+
     private fun getUserData() {
-        val docRef = mFireStore.collection("users").document(getCurrentUserId())
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                    _user = MutableLiveData(document.toObject<User>()!!)
-                } else {
-                    Log.d(TAG, "No such document")
-                }
+        val docRef = getCurrentUserEmail()?.let { mFireStore.collection("users").document(it) }
+        docRef?.get()?.addOnSuccessListener { document ->
+            if (document != null) {
+                Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+                _user = MutableLiveData(document.toObject<User>()!!)
+            } else {
+                Log.d(TAG, "No such document")
             }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
-            }
+        }?.addOnFailureListener { exception ->
+            Log.d(TAG, "get failed with ", exception)
+        }
     }
 
     private fun getUserGroups() {
 
-        val docRef = mFireStore.collection("users").document(getCurrentUserId())
-            .collection("groups")
-            .document("groupNames")
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                    _userGroupsList = MutableLiveData(document.toObject<GroupsList>()!!)
-                } else {
-                    Log.d(TAG, "No such document")
-                }
+        val docRef = getCurrentUserEmail()?.let {
+            mFireStore.collection("users").document(it)
+                .collection("groups")
+                .document("groupNames")
+        }
+        docRef?.get()?.addOnSuccessListener { document ->
+            if (document != null) {
+                Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+                _userGroupsList = MutableLiveData(document.toObject<GroupsList>()!!)
+            } else {
+                Log.d(TAG, "No such document")
             }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
-            }
+        }?.addOnFailureListener { exception ->
+            Log.d(TAG, "get failed with ", exception)
+        }
     }
 
     fun updateUserName(string: String){
@@ -133,14 +120,29 @@ class UserDataViewModel : ViewModel() {
         getUserData()
     }
 
-    fun createGroup(s: String) {
-        val docData: MutableMap<String, Any> = HashMap()
-        docData["user"] = listOf(getUser().value?.uid)
 
-        mFireStore.collection("users").document(getCurrentUserId()).collection("groups").document("groupNames")
-            .update("group", FieldValue.arrayUnion(s)).addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+    fun addToGroup(groupName: String, emailToAdd: Editable){
+        mFireStore.collection("groups").document(groupName)
+            .update("user", FieldValue.arrayUnion(emailToAdd.toString().lowercase())).addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
             .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
-        mFireStore.collection("groups").document(s)
+        mFireStore.collection("users").document(emailToAdd.toString()).collection("groups").document("groupNames")
+            .update("groupNames", FieldValue.arrayUnion(groupName)).addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+
+    }
+
+
+
+    fun createGroup(s: Editable) {
+        val docData: MutableMap<String, Any> = HashMap()
+        docData["user"] = listOf(getUser().value?.email)
+
+        getCurrentUserEmail()?.let {
+            mFireStore.collection("users").document(it).collection("groups").document("groupNames")
+                .update("groupNames", FieldValue.arrayUnion(s.toString())).addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+        }
+        mFireStore.collection("groups").document(s.toString())
             .set(docData).addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
             .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
         setGroup(s)
@@ -165,4 +167,23 @@ class UserDataViewModel : ViewModel() {
         }
     }
 
+    fun getGroupMemberUID(s: String){
+        val docRef = mFireStore.collection("groups").document(s)
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+                    _groupsNamesUid = MutableLiveData(document.toObject<GroupsNamesList>()!!)
+                } else {
+                    Log.d(TAG, "No such document")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+            }
+    }
+
+    fun getGroupMemberNames(): LiveData<ArrayList<String>>{
+        return _groupsNamesList
+    }
 }

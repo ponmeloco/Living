@@ -9,6 +9,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import de.living.R
 import de.living.databinding.ActivityMainBinding
 import de.living.viewmodel.UserDataViewModel
+import kotlinx.coroutines.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,12 +26,29 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         navView.setupWithNavController(navController)
-
         model.init()
 
+        val job = CoroutineScope(Dispatchers.IO).launchPeriodicAsync(10000) {
+            model.init()
+        }
+
+        job.start()
     }
 
 
+    private fun CoroutineScope.launchPeriodicAsync(
+        repeatMillis: Long,
+        action: () -> Unit
+    ) = this.async {
+        if (repeatMillis > 0) {
+            while (isActive) {
+                action()
+                delay(repeatMillis)
+            }
+        } else {
+            action()
+        }
+    }
 
 
 
