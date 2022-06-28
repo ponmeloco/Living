@@ -20,6 +20,7 @@ import de.living.viewmodel.UserDataViewModel
 class CleaningFragment : Fragment() {
 
     private var _binding: FragmentCleaningBinding? = null
+    private var selectedItem: Int = 0
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -35,9 +36,8 @@ class CleaningFragment : Fragment() {
         _binding = FragmentCleaningBinding.inflate(inflater, container, false)
         val root: View = binding.root
         inflateRecyclerview()
-        inflateGroupSpinner()
+        //inflateGroupSpinner()
         buttonEffect(binding.markAsFinishedButton)
-
 
         return root
     }
@@ -66,7 +66,13 @@ class CleaningFragment : Fragment() {
 
         adapter.setOnItemClickListener(object : AdapterRecyclerViewTasks.OnItemClickListener{
             override fun setOnClickListener(pos: Int) {
-
+                if(recyclerview.getChildAt(pos).isActivated){
+                    recyclerview.getChildAt(pos).isActivated = false
+                }else {
+                    recyclerview.getChildAt(selectedItem).isActivated = false
+                    selectedItem = pos
+                    recyclerview.getChildAt(selectedItem).isActivated = true
+                }
             }
         })
 
@@ -75,7 +81,8 @@ class CleaningFragment : Fragment() {
     }
 
 
-    private fun inflateGroupSpinner(){
+/*
+   private fun inflateGroupSpinner(){
         val spinner = binding.groupSpinner
         val groupNames = ArrayList<String?>()
 
@@ -90,7 +97,8 @@ class CleaningFragment : Fragment() {
             spinner.adapter = adapter
 
         }
-    }
+   }
+*/
 
     @Suppress("DEPRECATION","ClickableViewAccessibility")
     fun buttonEffect(button: View) {

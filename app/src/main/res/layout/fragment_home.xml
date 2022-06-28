@@ -22,6 +22,7 @@
             android:id="@+id/editTextViewYourName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:clickable="false"
             android:layout_weight="1"
             android:autofillHints="Your Name"
             android:backgroundTint="@color/mimosaYellow"
@@ -51,6 +52,7 @@
 
         <EditText
             android:id="@+id/editTextViewYourEmail"
+            android:clickable="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -77,7 +79,7 @@
         android:paddingEnd="20dp"
         android:paddingStart="20dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         app:layout_constraintTop_toBottomOf="@+id/linearLayoutYourEmail"
 >
@@ -104,19 +106,26 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/listViewGroups"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/listViewGroupsLinearLayout"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutInviteLeave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="top"
         app:layout_constraintTop_toBottomOf="@+id/linearLayoutGroups">
 
-    </androidx.recyclerview.widget.RecyclerView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/listViewGroups"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constrainedHeight="true">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 
     <androidx.appcompat.widget.LinearLayoutCompat

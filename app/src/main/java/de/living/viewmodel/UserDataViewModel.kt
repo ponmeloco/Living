@@ -1,6 +1,7 @@
 package de.living.viewmodel
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -20,6 +21,13 @@ class UserDataViewModel : ViewModel() {
         return _user
     }
 
+    fun setUserName(string: String){
+        _user.value?.name  = string
+    }
+    fun setUserEmail(string: String){
+        _user.value?.email  = string
+    }
+
     fun getGroups(): LiveData<GroupsList> {
         return _userGroupsList
     }
@@ -33,14 +41,14 @@ class UserDataViewModel : ViewModel() {
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    Log.d(ContentValues.TAG, "DocumentSnapshot data: ${document.data}")
+                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
                     _user = MutableLiveData(document.toObject<User>()!!)
                 } else {
-                    Log.d(ContentValues.TAG, "No such document")
+                    Log.d(TAG, "No such document")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.d(ContentValues.TAG, "get failed with ", exception)
+                Log.d(TAG, "get failed with ", exception)
             }
     }
 
@@ -51,16 +59,34 @@ class UserDataViewModel : ViewModel() {
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    Log.d(ContentValues.TAG, "DocumentSnapshot data: ${document.data}")
+                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
                     _userGroupsList = MutableLiveData(document.toObject<GroupsList>()!!)
                 } else {
-                    Log.d(ContentValues.TAG, "No such document")
+                    Log.d(TAG, "No such document")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.d(ContentValues.TAG, "get failed with ", exception)
+                Log.d(TAG, "get failed with ", exception)
             }
     }
+
+    fun updateUserName(string: String){
+        val docRef = mFireStore.collection("users").document(getCurrentUserId())
+        docRef
+            .update("name", string)
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+    }
+
+    fun updateUserEmail(string: String){
+        val docRef = mFireStore.collection("users").document(getCurrentUserId())
+        docRef
+            .update("email", string)
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully updated!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+    }
+
+
 
     fun init(){
         getUserGroups()

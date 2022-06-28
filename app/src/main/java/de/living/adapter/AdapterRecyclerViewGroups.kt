@@ -35,7 +35,7 @@ class AdapterRecyclerViewGroups(private val userGroupList: ArrayList<GroupsList>
     }
 
     // Holds the views for adding it to image and text
-    class ViewHolder(itemView: View, var mListener: OnItemClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class ViewHolder(itemView: View, private var mListener: OnItemClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val textViewGroupName: TextView = itemView.findViewById(R.id.textViewGroupName)
 
     init {
@@ -48,7 +48,6 @@ class AdapterRecyclerViewGroups(private val userGroupList: ArrayList<GroupsList>
 }
 
     interface OnItemClickListener{
-
     fun setOnClickListener(pos : Int)
     }
 

@@ -3,6 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/material_card_view"
     android:layout_width="match_parent"
+    android:checkable="true"
+    android:clickable="true"
+    android:focusable="true"
     android:layout_height="70dp"
     android:layout_margin="5dp"
     app:cardCornerRadius="8dp"
@@ -13,7 +16,7 @@
         android:id="@+id/linearLayoutTasks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/selectableItemBackground"
+        android:background="@drawable/selector_color"
         android:orientation="vertical"
         android:padding="5dp">
 
