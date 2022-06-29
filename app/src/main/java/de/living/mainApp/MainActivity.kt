@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import de.living.R
 import de.living.databinding.ActivityMainBinding
 import de.living.viewmodel.UserDataViewModel
@@ -22,14 +24,14 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
         val navView: BottomNavigationView = binding.navView
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
         val navController = navHostFragment.navController
 
         navView.setupWithNavController(navController)
-        model.init()
-
+        init()
         val job = CoroutineScope(Dispatchers.IO).launchPeriodicAsync(10000) {
-            model.init()
+            init()
         }
 
         job.start()
@@ -49,8 +51,12 @@ class MainActivity : AppCompatActivity() {
             action()
         }
     }
+    private fun init() {
+        model.getTasksFromDatabase(Firebase.auth.currentUser?.email+"ownGroup")
+        model.getUserGroups()
+        model.getUserData()
 
-
+    }
 
 
 }

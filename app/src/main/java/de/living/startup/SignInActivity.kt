@@ -9,9 +9,9 @@ import androidx.core.app.ActivityCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import de.living.mainApp.MainActivity
 import de.living.R
 import de.living.databinding.ActivitySignInBinding
+import de.living.mainApp.MainActivity
 
 
 class SignInActivity : AppCompatActivity() {

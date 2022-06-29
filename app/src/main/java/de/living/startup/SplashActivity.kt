@@ -7,8 +7,8 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import de.living.mainApp.MainActivity
 import de.living.databinding.ActivitySplashBinding
+import de.living.mainApp.MainActivity
 
 
 @SuppressLint("CustomSplashScreen")
@@ -22,7 +22,7 @@ class SplashActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         Handler(Looper.getMainLooper()).postDelayed({
-            if(auth.currentUser != null) {
+            if (auth.currentUser != null) {
                 auth.currentUser?.reload()?.addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         startActivity(Intent(this, MainActivity::class.java))
@@ -32,12 +32,11 @@ class SplashActivity : AppCompatActivity() {
                         finish()
                     }
                 }
-            }else {
+            } else {
                 startActivity(Intent(this, IntroActivity::class.java))
                 finish()
             }
         }, 1500)
-
 
 
     }

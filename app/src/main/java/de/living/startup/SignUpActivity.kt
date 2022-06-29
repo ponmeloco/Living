@@ -8,8 +8,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import de.living.R
@@ -19,6 +21,7 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var binding: ActivitySignUpBinding
     private lateinit var db: FirebaseFirestore
+    private val mFireStore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +41,7 @@ class SignUpActivity : AppCompatActivity() {
         val email = binding.etEmail.text.toString().lowercase()
         val pass = binding.etPassword.text.toString()
         val name = binding.etName.text.toString()
-        if (email.isBlank() || pass.isBlank() || name.isBlank() ) {
+        if (email.isBlank() || pass.isBlank() || name.isBlank()) {
             Toast.makeText(this, "Please fill out all fields", Toast.LENGTH_SHORT).show()
             return
         }
@@ -53,23 +56,26 @@ class SignUpActivity : AppCompatActivity() {
                     "email" to email,
                     "uid" to uid,
                 )
-
                 val groupName: MutableMap<String, Any> = HashMap()
-                groupName["groupNames"] = listOf("Your Group")
-
+                groupName["groupNames"] = listOf(email+"ownGroup")
                 if (uid != null) {
                     db.collection("users").document(email).set(user)
                         .addOnSuccessListener {
                             Log.d(TAG, "DocumentSnapshot added with ID: $uid")
-
                         }
                         .addOnFailureListener { e ->
                             Log.w(TAG, "Error adding document", e)
                         }
-                    db.collection("users").document(email).collection("groups").document("groupNames").set(groupName)
+                    db.collection("users").document(email).collection("groups")
+                        .document("groupNames").set(groupName)
+
                     groupName.clear()
-                    groupName["user"] = listOf(email)
-                    db.collection("groups").document(email+"ownGroup").set(groupName)
+                    groupName["user"] = arrayListOf(email)
+
+                    db.collection("groups").document(email + "ownGroup").set(groupName)
+
+                    createTask("Test","test",email+ "ownGroup")
+
                     Toast.makeText(this, "Successfully Singed Up", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this@SignUpActivity, IntroActivity::class.java))
                     ActivityCompat.finishAffinity(this)
@@ -97,4 +103,16 @@ class SignUpActivity : AppCompatActivity() {
     }
 
 
+    private fun createTask(_task: String, _memberName: String, s: String) {
+        val mapOfTask = hashMapOf(
+            "name" to _task,
+            "memberToDo" to _memberName,
+            "timeCreated" to Timestamp.now()
+        )
+
+        mFireStore.collection("groups").document(s)
+            .update("tasks", FieldValue.arrayUnion(mapOfTask))
+            .addOnSuccessListener { Log.d(TAG, "Task successfully created") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+    }
 }

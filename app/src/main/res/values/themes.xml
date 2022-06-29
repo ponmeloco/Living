@@ -12,7 +12,7 @@
         <item name="windowNoTitle">true</item>
         <item name="android:actionBarSize">0dp</item>
         <item name="fontFamily">@font/open_sans_light</item>
-        <item name ="android:windowSoftInputMode">adjustNothing</item>
+        <item name="android:windowSoftInputMode">adjustNothing</item>
         <item name="android:statusBarColor">@color/mimosaYellow</item>
     </style>
 

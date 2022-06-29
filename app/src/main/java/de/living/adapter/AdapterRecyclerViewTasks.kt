@@ -1,16 +1,20 @@
 package de.living.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.living.R
+import java.text.SimpleDateFormat
 
 
-class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<String>) : RecyclerView.Adapter<AdapterRecyclerViewTasks.ViewHolder>() {
+class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<HashMap<String, String>>) :
+    RecyclerView.Adapter<AdapterRecyclerViewTasks.ViewHolder>() {
 
     private lateinit var mListener: OnItemClickListener
+
     // create new views
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // inflates the card_view_design view
@@ -21,12 +25,19 @@ class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<String>) : R
     }
 
     // binds the list items to a view
+    @Suppress("CAST_NEVER_SUCCEEDS")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val tasks = userTasksList[position]
         // sets the text to the textview from our itemHolder class
-        holder.textViewTask.text = tasks
-        holder.textViewRotation.text = tasks
-        holder.textViewTimeRemaining.text = tasks
+        holder.textViewTask.text = tasks["name"]
+        holder.textViewRotation.text = tasks["memberToDo"]
+        val timestamp = tasks["timeCreated"] as com.google.firebase.Timestamp
+        val milliseconds = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
+        val sdf = SimpleDateFormat("MM/dd/yyyy")
+        val netDate = java.util.Date(milliseconds)
+        val date = sdf.format(netDate).toString()
+        Log.d("TAG170", date)
+        holder.textViewTimeRemaining.text = date
 
     }
 
@@ -36,7 +47,8 @@ class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<String>) : R
     }
 
     // Holds the views for adding it to image and text
-    class ViewHolder(itemView: View, private var mListener:OnItemClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class ViewHolder(itemView: View, private var mListener: OnItemClickListener) :
+        RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val textViewTask: TextView = itemView.findViewById(R.id.textViewTask)
         val textViewRotation: TextView = itemView.findViewById(R.id.textViewRotation)
         val textViewTimeRemaining: TextView = itemView.findViewById(R.id.textViewTimeRemaining)
@@ -46,15 +58,15 @@ class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<String>) : R
         }
 
         override fun onClick(v: View?) {
-                mListener.setOnClickListener(adapterPosition)
+            mListener.setOnClickListener(adapterPosition)
         }
     }
 
-    interface OnItemClickListener{
-        fun setOnClickListener(pos : Int)
+    interface OnItemClickListener {
+        fun setOnClickListener(pos: Int)
     }
 
-    fun setOnItemClickListener(mListener: OnItemClickListener){
+    fun setOnItemClickListener(mListener: OnItemClickListener) {
         this.mListener = mListener
     }
 }

@@ -4,16 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginEnd="30dp"
     android:layout_marginStart="30dp"
-    android:layout_marginBottom="70dp"
     android:layout_marginTop="10dp"
+    android:layout_marginEnd="30dp"
+    android:layout_marginBottom="70dp"
     tools:context=".mainApp.CleaningFragment">
 
 
     <Spinner
         android:id="@+id/groupSpinner"
-        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,42 +79,37 @@
 
             <Button
                 android:id="@+id/edit_task_button"
-                android:textAllCaps="false"
-                android:text="@string/edit_task"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
-                android:layout_weight="5"/>
+                android:layout_weight="5"
+                android:text="@string/edit_task"
+                android:textAllCaps="false" />
 
             <Button
-                android:text="@string/more_info_button"
-                android:textAllCaps="false"
                 android:id="@+id/more_info_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
-                android:layout_weight="5"/>
+                android:layout_weight="5"
+                android:text="@string/more_info_button"
+                android:textAllCaps="false" />
 
             <Button
-                android:text="@string/add_task"
                 android:id="@+id/add_button"
-                android:textAllCaps="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
-                android:layout_weight="5"/>
+                android:layout_weight="5"
+                android:text="@string/add_task"
+                android:textAllCaps="false" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

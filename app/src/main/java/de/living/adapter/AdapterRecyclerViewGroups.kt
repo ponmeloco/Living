@@ -8,9 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import de.living.R
 
 
-class AdapterRecyclerViewGroups(private val userGroupList: ArrayList<String>) : RecyclerView.Adapter<AdapterRecyclerViewGroups.ViewHolder>() {
+class AdapterRecyclerViewGroups(private val userGroupList: ArrayList<String>) :
+    RecyclerView.Adapter<AdapterRecyclerViewGroups.ViewHolder>() {
 
     private lateinit var mListener: OnItemClickListener
+
     // create new views
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // inflates the card_view_design view
@@ -34,23 +36,24 @@ class AdapterRecyclerViewGroups(private val userGroupList: ArrayList<String>) : 
     }
 
     // Holds the views for adding it to image and text
-    class ViewHolder(itemView: View, private var mListener: OnItemClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class ViewHolder(itemView: View, private var mListener: OnItemClickListener) :
+        RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val textViewGroupName: TextView = itemView.findViewById(R.id.textViewGroupName)
 
-    init {
-        itemView.setOnClickListener(this)
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            mListener.setOnClickListener(adapterPosition)
+        }
     }
 
-    override fun onClick(v: View?) {
-        mListener.setOnClickListener(adapterPosition)
-    }
-}
-
-    interface OnItemClickListener{
-    fun setOnClickListener(pos : Int)
+    interface OnItemClickListener {
+        fun setOnClickListener(pos: Int)
     }
 
-    fun setOnItemClickListener(mListener: OnItemClickListener){
+    fun setOnItemClickListener(mListener: OnItemClickListener) {
         this.mListener = mListener
     }
 }

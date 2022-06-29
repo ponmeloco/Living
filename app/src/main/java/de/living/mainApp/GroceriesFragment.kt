@@ -37,11 +37,10 @@ class GroceriesFragment : Fragment() {
 
         val logoutButton: Button = binding.logoutButton
 
+
         logoutButton.setOnClickListener {
             logout()
         }
-        binding.textGroceries.text = "Welcome to Living!"
-
         return root
     }
 
@@ -50,13 +49,13 @@ class GroceriesFragment : Fragment() {
         _binding = null
     }
 
-    private fun logout(){
+    private fun logout() {
         val alertDialog = AlertDialog.Builder(activity)
         val auth = Firebase.auth
         alertDialog.apply {
             setMessage("Wanted to logout?")
             setPositiveButton("Yes!") { _, _ ->
-                if(auth.currentUser != null)run {
+                if (auth.currentUser != null) run {
                     auth.signOut()
                     startActivity(Intent(activity, IntroActivity::class.java))
                     activity?.finishAffinity()

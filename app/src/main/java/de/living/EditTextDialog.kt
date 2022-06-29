@@ -18,7 +18,12 @@ class EditTextDialog : DialogFragment() {
         private const val EXTRA_MULTILINE = "multiline"
         private const val EXTRA_TEXT = "text"
 
-        fun newInstance(title: String? = null, hint: String? = null, text: String? = null, isMultiline: Boolean = false): EditTextDialog {
+        fun newInstance(
+            title: String? = null,
+            hint: String? = null,
+            text: String? = null,
+            isMultiline: Boolean = false
+        ): EditTextDialog {
             val dialog = EditTextDialog()
             val args = Bundle().apply {
                 putString(EXTRA_TITLE, title)
@@ -50,11 +55,10 @@ class EditTextDialog : DialogFragment() {
 
         if (isMultiline) {
             editText.minLines = 3
-            editText.inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+            editText.inputType =
+                InputType.TYPE_TEXT_FLAG_MULTI_LINE or InputType.TYPE_TEXT_FLAG_CAP_SENTENCES or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         }
         if (text != null) {
-            // editText.setText(text)
-            // editText.setSelection(text.length)
             editText.append(text)
         }
 
