@@ -29,8 +29,7 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         navView.setupWithNavController(navController)
-        init()
-        val job = CoroutineScope(Dispatchers.IO).launchPeriodicAsync(10000) {
+        val job = CoroutineScope(Dispatchers.IO).launchPeriodicAsync(2000) {
             init()
         }
 

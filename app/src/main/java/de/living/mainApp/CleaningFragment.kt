@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +21,6 @@ import de.living.viewmodel.UserDataViewModel
 
 
 class CleaningFragment : Fragment() {
-
     private var _binding: FragmentCleaningBinding? = null
     private var selectedItem: Int = 0
 
@@ -39,7 +39,20 @@ class CleaningFragment : Fragment() {
         val root: View = binding.root
         inflateRecyclerview()
         inflateGroupSpinner()
-        buttonEffect(binding.markAsFinishedButton)
+
+        _userDataViewModel.getGroups().observe(viewLifecycleOwner){
+            inflateRecyclerview()
+        }
+
+        binding.markAsFinishedButton.setOnClickListener{
+            if (selectedItem != 0) {
+                buttonEffect(binding.markAsFinishedButton)
+                 _userDataViewModel.markTaskAsFinished(selectedItem,binding.groupSpinner.selectedItem.toString())
+            } else {
+                Toast.makeText(activity, "No group selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
         binding.addButton.setOnClickListener {
             val dialog =
@@ -58,7 +71,7 @@ class CleaningFragment : Fragment() {
         binding.groupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 _userDataViewModel.getTasksFromDatabase(binding.groupSpinner.getItemAtPosition(position).toString())
-                inflateRecyclerview()
+                binding.recyclerViewTasks.adapter?.notifyDataSetChanged()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {

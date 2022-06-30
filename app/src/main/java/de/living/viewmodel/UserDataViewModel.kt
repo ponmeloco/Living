@@ -10,7 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FieldValue.arrayRemove
 import com.google.firebase.firestore.FieldValue.arrayUnion
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
@@ -19,10 +19,12 @@ import de.living.model.GroupsNamesList
 import de.living.model.Tasks
 import de.living.model.User
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 @Suppress("unused")
 class UserDataViewModel : ViewModel() {
-    private lateinit var _tasks: MutableLiveData<Tasks>
+    private var _tasks: MutableLiveData<Tasks> = MutableLiveData<Tasks>()
     private val mFireStore = FirebaseFirestore.getInstance()
     private var _user: MutableLiveData<User> = MutableLiveData<User>()
     private var _userUIDtoName: MutableLiveData<User> = MutableLiveData<User>()
@@ -40,12 +42,8 @@ class UserDataViewModel : ViewModel() {
         _user.value?.email = string
     }
 
-    fun getUser(): LiveData<User> {
-        return _user
-    }
-
-    fun getGroups(): LiveData<GroupsList> {
-        return _userGroupsList
+    private fun setTasks(tasks: HashMap<String,String>){
+        _tasks.value?.tasks?.add(tasks)
     }
 
     private fun setGroup(s: Editable) {
@@ -54,7 +52,22 @@ class UserDataViewModel : ViewModel() {
 
     fun getTasks(): MutableLiveData<Tasks> {
         return _tasks
+    }
 
+    private fun getCurrentUserId(): String {
+        return FirebaseAuth.getInstance().currentUser!!.uid
+    }
+
+    private fun getCurrentUserEmail(): String? {
+        return FirebaseAuth.getInstance().currentUser!!.email
+    }
+
+    fun getUser(): LiveData<User> {
+        return _user
+    }
+
+    fun getGroups(): LiveData<GroupsList> {
+        return _userGroupsList
     }
 
 
@@ -85,35 +98,6 @@ class UserDataViewModel : ViewModel() {
         }?.addOnFailureListener { exception ->
             Log.d(TAG, "get failed with ", exception)
         }
-    }
-
-    fun leaveGroup(s: String?) {
-        if (s != null) {
-            mFireStore.collection("groups").document(s)
-                .update("user", FieldValue.arrayRemove(getUser().value?.email))
-                .addOnSuccessListener { Log.d(TAG, "User successfully removed from groups/user") }
-                .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
-            getCurrentUserEmail()?.let {
-                mFireStore.collection("users").document(it).collection("groups")
-                    .document("groupNames")
-                    .update("groupNames", FieldValue.arrayRemove(s))
-                    .addOnSuccessListener {
-                        Log.d(
-                            TAG,
-                            "User successfully removed from user/groupNames"
-                        )
-                    }
-                    .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
-            }
-        }
-    }
-
-    private fun getCurrentUserId(): String {
-        return FirebaseAuth.getInstance().currentUser!!.uid
-    }
-
-    private fun getCurrentUserEmail(): String? {
-        return FirebaseAuth.getInstance().currentUser!!.email
     }
 
 
@@ -171,7 +155,10 @@ class UserDataViewModel : ViewModel() {
 
         mFireStore.collection("groups").document(s)
             .update("tasks", arrayUnion(mapOfTask))
-            .addOnSuccessListener { Log.d(TAG, "Task successfully created") }
+            .addOnSuccessListener {
+                _tasks.value?.tasks?.add(mapOfTask as HashMap<String, String>)
+                //setTasks(mapOfTask as HashMap<String, String>)
+                Log.d(TAG, "Task successfully created") }
             .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
     }
 
@@ -243,5 +230,35 @@ class UserDataViewModel : ViewModel() {
 
     fun getGroupMemberNames(): LiveData<ArrayList<String>> {
         return _groupsNamesList
+    }
+
+    fun leaveGroup(s: String?) {
+        if (s != null) {
+            mFireStore.collection("groups").document(s)
+                .update("user", arrayRemove(getUser().value?.email))
+                .addOnSuccessListener { Log.d(TAG, "User successfully removed from groups/user") }
+                .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+            getCurrentUserEmail()?.let {
+                mFireStore.collection("users").document(it).collection("groups")
+                    .document("groupNames")
+                    .update("groupNames", arrayRemove(s))
+                    .addOnSuccessListener {
+                        Log.d(
+                            TAG,
+                            "User successfully removed from user/groupNames"
+                        )
+                    }
+                    .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+            }
+        }
+    }
+
+
+
+    fun markTaskAsFinished(index:Int,group:String){
+        mFireStore.collection("groups").document(group)
+            .update("tasks", arrayRemove(getTasks().value?.tasks?.get(index)))
+            .addOnSuccessListener { Log.d(TAG, "Item successfully removed from groups/user") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
     }
 }
