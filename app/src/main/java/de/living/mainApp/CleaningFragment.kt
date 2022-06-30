@@ -48,6 +48,8 @@ class CleaningFragment : Fragment() {
             if (selectedItem != 0) {
                 buttonEffect(binding.markAsFinishedButton)
                  _userDataViewModel.markTaskAsFinished(selectedItem,binding.groupSpinner.selectedItem.toString())
+                binding.groupSpinner.setSelection(0)
+                inflateRecyclerview()
             } else {
                 Toast.makeText(activity, "No group selected", Toast.LENGTH_SHORT).show()
             }
@@ -60,8 +62,9 @@ class CleaningFragment : Fragment() {
             dialog.onOk = {
                 _userDataViewModel.getUser().value?.let { it1 ->
                     _userDataViewModel.createTask(dialog.editText.text.toString(), it1.name,
-                        (_userDataViewModel.getUser().value?.email) +"ownGroup")
+                        (binding.groupSpinner.selectedItem as String))
                 }
+                binding.groupSpinner.setSelection(0)
                 inflateRecyclerview()
             }
             dialog.show(parentFragmentManager, "editDescription")
@@ -72,10 +75,9 @@ class CleaningFragment : Fragment() {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 _userDataViewModel.getTasksFromDatabase(binding.groupSpinner.getItemAtPosition(position).toString())
                 binding.recyclerViewTasks.adapter?.notifyDataSetChanged()
+                inflateRecyclerview()
             }
-
             override fun onNothingSelected(parent: AdapterView<*>) {
-
             }
         }
         return root
@@ -130,9 +132,7 @@ class CleaningFragment : Fragment() {
             )
         }
         spinner.adapter = adapter
-
-
-
+        binding.groupSpinner.setSelection(0)
     }
 }
 
