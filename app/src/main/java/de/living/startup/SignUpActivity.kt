@@ -16,6 +16,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import de.living.R
 import de.living.databinding.ActivitySignUpBinding
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import java.util.*
+
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -74,7 +78,7 @@ class SignUpActivity : AppCompatActivity() {
 
                     db.collection("groups").document(email + "ownGroup").set(groupName)
 
-                    createTask("Test","test",email+ "ownGroup")
+                    createTask("Your tasks",name,email+ "ownGroup")
 
                     Toast.makeText(this, "Successfully Singed Up", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this@SignUpActivity, IntroActivity::class.java))
@@ -104,11 +108,16 @@ class SignUpActivity : AppCompatActivity() {
 
 
     private fun createTask(_task: String, _memberName: String, s: String) {
+        val seconds: Long = Timestamp.now().seconds
+        val addedSeconds = Instant.ofEpochSecond(seconds).plus(7, ChronoUnit.DAYS).epochSecond
+        val newTimeStamp = Timestamp(addedSeconds, 0)
         val mapOfTask = hashMapOf(
             "name" to _task,
             "memberToDo" to _memberName,
-            "timeCreated" to Timestamp.now()
+            "timeCreated" to Timestamp.now(),
+            "timeDeadline" to newTimeStamp
         )
+
 
         mFireStore.collection("groups").document(s)
             .update("tasks", FieldValue.arrayUnion(mapOfTask))

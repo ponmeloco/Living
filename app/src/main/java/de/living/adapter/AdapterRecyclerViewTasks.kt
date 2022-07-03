@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.Timestamp
 import de.living.R
 import java.text.SimpleDateFormat
 
@@ -31,13 +32,19 @@ class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<HashMap<Stri
         // sets the text to the textview from our itemHolder class
         holder.textViewTask.text = tasks["name"]
         holder.textViewRotation.text = tasks["memberToDo"]
-        val timestamp = tasks["timeCreated"] as com.google.firebase.Timestamp
+        holder.textViewTill.text = tasks["till"]
+        val timeStampDeadline = tasks["timeDeadline"] as Timestamp
+        val timestamp = tasks["timeCreated"] as Timestamp
         val milliseconds = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
+        val milliseconds2 = timeStampDeadline.seconds * 1000 + timestamp.nanoseconds / 1000000
         val sdf = SimpleDateFormat("MM/dd/yyyy")
         val netDate = java.util.Date(milliseconds)
-        val date = sdf.format(netDate).toString()
-        Log.d("TAG170", date)
-        holder.textViewTimeRemaining.text = date
+        val netDate2 = java.util.Date(milliseconds2)
+        val date1 = sdf.format(netDate).toString()
+        val date2 = sdf.format(netDate2).toString()
+        Log.d("TAG170", date1)
+        holder.textViewTimeDeadline.text = date2
+        holder.textViewTimeRemaining.text = date1
 
     }
 
@@ -52,6 +59,8 @@ class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<HashMap<Stri
         val textViewTask: TextView = itemView.findViewById(R.id.textViewTask)
         val textViewRotation: TextView = itemView.findViewById(R.id.textViewRotation)
         val textViewTimeRemaining: TextView = itemView.findViewById(R.id.textViewTimeRemaining)
+        val textViewTimeDeadline: TextView =itemView.findViewById(R.id.textViewTimeDeadline)
+        val textViewTill: TextView = itemView.findViewById(R.id.textViewTimeTill)
 
         init {
             itemView.setOnClickListener(this)

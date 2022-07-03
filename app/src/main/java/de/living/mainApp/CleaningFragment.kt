@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.Timestamp
 import de.living.EditTextDialog
 import de.living.adapter.AdapterRecyclerViewTasks
 import de.living.databinding.FragmentCleaningBinding
@@ -100,6 +101,7 @@ class CleaningFragment : Fragment() {
 
         for (item in _userDataViewModel.getTasks().value?.tasks!!)
             data.add(item)
+
 
         // This will pass the ArrayList to our Adapter
         val adapter = AdapterRecyclerViewTasks(data)

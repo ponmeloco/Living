@@ -18,6 +18,8 @@ import de.living.model.GroupsList
 import de.living.model.GroupsNamesList
 import de.living.model.Tasks
 import de.living.model.User
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -147,10 +149,14 @@ class UserDataViewModel : ViewModel() {
     }
 
     fun createTask(_task: String, _memberName: String, s: String) {
+        val seconds: Long = Timestamp.now().seconds
+        val addedSeconds = Instant.ofEpochSecond(seconds).plus(7, ChronoUnit.DAYS).epochSecond
+        val newTimeStamp = Timestamp(addedSeconds, 0)
         val mapOfTask = hashMapOf(
             "name" to _task,
             "memberToDo" to _memberName,
-            "timeCreated" to Timestamp.now()
+            "timeCreated" to Timestamp.now(),
+            "timeDeadline" to newTimeStamp
         )
 
         mFireStore.collection("groups").document(s)
@@ -178,11 +184,16 @@ class UserDataViewModel : ViewModel() {
             .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
         setGroup(s)
 
+        val seconds: Long = Timestamp.now().seconds
+        val addedSeconds = Instant.ofEpochSecond(seconds).plus(7, ChronoUnit.DAYS).epochSecond
+        val newTimeStamp = Timestamp(addedSeconds, 0)
         val nestedData = hashMapOf(
-            "name" to "Should",
-            "memberToDo" to "something",
-            "timeCreated" to Timestamp(Date())
+            "name" to "Groups Tasks",
+            "memberToDo" to getUser().value?.name.toString(),
+            "timeCreated" to Timestamp.now(),
+            "timeDeadline" to newTimeStamp
         )
+
         val docData2 = hashMapOf(
             "tasks" to arrayListOf(nestedData),
         )
