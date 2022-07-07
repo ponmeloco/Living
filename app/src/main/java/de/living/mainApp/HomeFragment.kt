@@ -140,6 +140,8 @@ class HomeFragment : Fragment() {
                             )
                         }
                     }
+                    recyclerview.getChildAt(selectedItem).isActivated = false
+                    selectedItem = -1
                 }
                 dialog.show(parentFragmentManager, "editDescription")
             } else {
