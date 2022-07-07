@@ -56,4 +56,5 @@ class AdapterRecyclerViewGroups(private val userGroupList: ArrayList<String>) :
     fun setOnItemClickListener(mListener: OnItemClickListener) {
         this.mListener = mListener
     }
+
 }

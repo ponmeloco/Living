@@ -13,47 +13,34 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue.arrayRemove
 import com.google.firebase.firestore.FieldValue.arrayUnion
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
-import de.living.model.GroupsList
-import de.living.model.GroupsNamesList
-import de.living.model.Tasks
-import de.living.model.User
+import de.living.model.BigUser
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 @Suppress("unused")
 class UserDataViewModel : ViewModel() {
-    private var _tasks: MutableLiveData<Tasks> = MutableLiveData<Tasks>()
     private val mFireStore = FirebaseFirestore.getInstance()
-    private var _user: MutableLiveData<User> = MutableLiveData<User>()
-    private var _userUIDtoName: MutableLiveData<User> = MutableLiveData<User>()
-    private var _groupsNamesList: MutableLiveData<ArrayList<String>> =
-        MutableLiveData<ArrayList<String>>()
-    private var _userGroupsList: MutableLiveData<GroupsList> = MutableLiveData<GroupsList>()
-    private var _groupsNamesUid: MutableLiveData<GroupsNamesList> =
-        MutableLiveData<GroupsNamesList>()
+    var bigUser: MutableLiveData<BigUser> = MutableLiveData<BigUser>(BigUser())
 
-    fun setUserName(string: String) {
-        _user.value?.name = string
+
+    fun setUserName(s: String) {
+        bigUser.value?.name = s
     }
 
-    fun setUserEmail(string: String) {
-        _user.value?.email = string
+    fun setUserEmail(email: String) {
+        bigUser.value?.email = email
     }
 
-    private fun setTasks(tasks: HashMap<String,String>){
-        _tasks.value?.tasks?.add(tasks)
+    private fun setTasks(groupName: String, tasks: HashMap<String, String>) {
+        bigUser.value?.tasksPerGroup?.get(groupName)?.add(tasks)
     }
 
     private fun setGroup(s: Editable) {
-        _userGroupsList.value?.groupNames?.add(s.toString())
+        bigUser.value?.let { bigUser.value?.memberPerGroup?.get(s.toString())?.add(it.name) }
     }
 
-    fun getTasks(): MutableLiveData<Tasks> {
-        return _tasks
+    fun getTasks(s: String): ArrayList<HashMap<String, String>>? {
+        return bigUser.value?.tasksPerGroup?.get(s)
     }
 
     private fun getCurrentUserId(): String {
@@ -64,51 +51,53 @@ class UserDataViewModel : ViewModel() {
         return FirebaseAuth.getInstance().currentUser!!.email
     }
 
-    fun getUser(): LiveData<User> {
-        return _user
+    fun getUser(): LiveData<BigUser> {
+        return bigUser
     }
 
-    fun getGroups(): LiveData<GroupsList> {
-        return _userGroupsList
+    fun getGroups(): ArrayList<String>? {
+        return bigUser.value?.groupNames
+    }
+
+    fun getGroupMemberNames(groupName: String): java.util.ArrayList<String>? {
+        return bigUser.value?.memberPerGroup?.get(groupName)
     }
 
 
-    fun getTasksFromDatabase(group: String) {
-        val docRef = mFireStore.collection("groups").document(group)
+    fun getTasksFromDatabase() {
+        val docRef = mFireStore.collection("groups")
+            .whereArrayContains("user", bigUser.value?.email.toString())
         docRef.get()
             .addOnSuccessListener { document ->
-                Log.d(TAG, "Task from Database $group ${document.get("tasks")}")
-                _tasks =
-                    MutableLiveData(Tasks(document.get("tasks") as ArrayList<HashMap<String, String>>))
-                Log.d(TAG, "GET TASK FROM DATABASE CALLED")
+                Log.d(
+                    TAG,
+                    "Tasks from  Database Snapshot (size=${document.size()}):  ${document.documents}"
+                )
+                if (!document.isEmpty) {
+                    bigUser.value?.groupNames?.clear()
+                    for (doc in document) {
+                        bigUser.value?.groupNames?.add(doc.id)
+                        val test = doc.data["user"] as  ArrayList<String>
+                        bigUser.value?.memberPerGroup?.set(doc.id, test)
+                        if(doc.data["tasks"] != null) {
+                            bigUser.value?.tasksPerGroup?.put(
+                                doc.id,
+                                doc.data["tasks"] as ArrayList<HashMap<String, String>>
+                            )
+                        }
+                    }
+                }
             }
     }
-
-    fun getUserGroups() {
-        val docRef = getCurrentUserEmail()?.let {
-            mFireStore.collection("users").document(it)
-                .collection("groups")
-                .document("groupNames")
-        }
-        docRef?.get()?.addOnSuccessListener { document ->
-            if (document != null) {
-                Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                _userGroupsList = MutableLiveData(document.toObject<GroupsList>()!!)
-            } else {
-                Log.d(TAG, "No such document")
-            }
-        }?.addOnFailureListener { exception ->
-            Log.d(TAG, "get failed with ", exception)
-        }
-    }
-
 
     fun getUserData() {
         val docRef = getCurrentUserEmail()?.let { mFireStore.collection("users").document(it) }
         docRef?.get()?.addOnSuccessListener { document ->
             if (document != null) {
-                Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                _user = MutableLiveData(document.toObject<User>()!!)
+                Log.d(TAG, "getUserData snapshot name: ${document.data?.get("name")}")
+                bigUser.value?.name = document.data?.get("name") as String
+                bigUser.value?.email = document.data?.get("email") as String
+                bigUser.value?.uid = document.data?.get("uid") as String
             } else {
                 Log.d(TAG, "No such document")
             }
@@ -119,11 +108,9 @@ class UserDataViewModel : ViewModel() {
 
 
     fun updateUserName(string: String) {
-        val docRef = mFireStore.collection("users").document(getCurrentUserId())
-        docRef
-            .update("name", string)
-            .addOnSuccessListener { Log.d(TAG, "Username successfully updated") }
-            .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+        val docRef = getCurrentUserEmail()?.let { mFireStore.collection("users").document(it) }
+        docRef?.update("name", string)?.addOnSuccessListener { Log.d(TAG, "Username successfully updated") }
+            ?.addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
     }
 
     fun updateUserEmail(string: String) {
@@ -135,112 +122,44 @@ class UserDataViewModel : ViewModel() {
     }
 
 
-    fun addToGroup(groupName: String, emailToAdd: Editable) {
+    fun addToGroup(groupName: String, emailToAdd: String) {
         mFireStore.collection("groups").document(groupName)
-            .update("user", arrayUnion(emailToAdd.toString().lowercase()))
-            .addOnSuccessListener { Log.d(TAG, "User successfully to group users added") }
+            .update("user", arrayUnion(emailToAdd))
+            .addOnSuccessListener {
+                Log.d(TAG, "User successfully to group users added")
+            }
             .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
-        mFireStore.collection("users").document(emailToAdd.toString()).collection("groups")
-            .document("groupNames")
-            .update("groupNames", arrayUnion(groupName))
-            .addOnSuccessListener { Log.d(TAG, "User successfully invited to group") }
-            .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
-
     }
 
-    fun createTask(_task: String, _memberName: String, s: String) {
+
+
+    fun createTask(task: String, memberName: String, groupName: String) {
         val seconds: Long = Timestamp.now().seconds
         val addedSeconds = Instant.ofEpochSecond(seconds).plus(7, ChronoUnit.DAYS).epochSecond
         val newTimeStamp = Timestamp(addedSeconds, 0)
         val mapOfTask = hashMapOf(
-            "name" to _task,
-            "memberToDo" to _memberName,
+            "name" to task,
+            "memberToDo" to memberName,
             "timeCreated" to Timestamp.now(),
             "timeDeadline" to newTimeStamp
         )
 
-        mFireStore.collection("groups").document(s)
+        mFireStore.collection("groups").document(groupName)
             .update("tasks", arrayUnion(mapOfTask))
             .addOnSuccessListener {
-                _tasks.value?.tasks?.add(mapOfTask as HashMap<String, String>)
-                //setTasks(mapOfTask as HashMap<String, String>)
-                Log.d(TAG, "Task successfully created") }
+                setTasks(groupName, mapOfTask as HashMap<String, String>)
+                Log.d(TAG, "Task successfully created")
+            }
             .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
     }
 
-    fun createGroup(s: Editable) {
+    fun createGroup(s: String) {
         val docData: MutableMap<String, Any> = HashMap()
         docData["user"] = listOf(getUser().value?.email)
-
-        getCurrentUserEmail()?.let {
-            mFireStore.collection("users").document(it).collection("groups").document("groupNames")
-                .update("groupNames", arrayUnion(s.toString()))
-                .addOnSuccessListener { Log.d(TAG, "Group to user/groups successfully created") }
-                .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
-        }
-        mFireStore.collection("groups").document(s.toString())
+        mFireStore.collection("groups").document(s)
             .set(docData)
             .addOnSuccessListener { Log.d(TAG, "Group to groups successfully created") }
             .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
-        setGroup(s)
-
-        val seconds: Long = Timestamp.now().seconds
-        val addedSeconds = Instant.ofEpochSecond(seconds).plus(7, ChronoUnit.DAYS).epochSecond
-        val newTimeStamp = Timestamp(addedSeconds, 0)
-        val nestedData = hashMapOf(
-            "name" to "Groups Tasks",
-            "memberToDo" to getUser().value?.name.toString(),
-            "timeCreated" to Timestamp.now(),
-            "timeDeadline" to newTimeStamp
-        )
-
-        val docData2 = hashMapOf(
-            "tasks" to arrayListOf(nestedData),
-        )
-        mFireStore.collection("groups").document(s.toString())
-            .set(docData2)
-            .addOnSuccessListener { Log.d(TAG, "Task successfully created") }
-            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
-
-    }
-
-    fun uidToUsernames() {
-        val docRef = mFireStore.collection("users").document(getCurrentUserId())
-        for (item in _groupsNamesUid.value?.user!!) {
-            docRef.get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                        _userUIDtoName = MutableLiveData(document.toObject<User>()!!)
-                        _userUIDtoName.value?.let { _groupsNamesList.value?.add(it.name) }
-                    } else {
-                        Log.d(TAG, "No such document")
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Log.d(TAG, "get failed with ", exception)
-                }
-        }
-    }
-
-    fun getGroupMemberUID(s: String) {
-        val docRef = mFireStore.collection("groups").document(s)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                    _groupsNamesUid = MutableLiveData(document.toObject<GroupsNamesList>()!!)
-                } else {
-                    Log.d(TAG, "No such document")
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
-            }
-    }
-
-    fun getGroupMemberNames(): LiveData<ArrayList<String>> {
-        return _groupsNamesList
     }
 
     fun leaveGroup(s: String?) {
@@ -249,27 +168,57 @@ class UserDataViewModel : ViewModel() {
                 .update("user", arrayRemove(getUser().value?.email))
                 .addOnSuccessListener { Log.d(TAG, "User successfully removed from groups/user") }
                 .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
-            getCurrentUserEmail()?.let {
-                mFireStore.collection("users").document(it).collection("groups")
-                    .document("groupNames")
-                    .update("groupNames", arrayRemove(s))
-                    .addOnSuccessListener {
-                        Log.d(
-                            TAG,
-                            "User successfully removed from user/groupNames"
-                        )
-                    }
-                    .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
-            }
         }
     }
 
-
-
-    fun markTaskAsFinished(index:Int,group:String){
+    fun deleteTask(index: Int,group: String){
         mFireStore.collection("groups").document(group)
-            .update("tasks", arrayRemove(getTasks().value?.tasks?.get(index)))
-            .addOnSuccessListener { Log.d(TAG, "Item successfully removed from groups/user") }
+            .update("tasks", arrayRemove(getTasks(group)?.get(index)))
+            .addOnSuccessListener { Log.d(TAG, "Member of task successfully deleted") }
             .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+
+        getTasks(group)?.removeAt(index)
     }
+
+    fun markTaskAsFinished(index: Int, group: String) {
+
+        val memberOnTask = getTasks(group)?.get(index)?.get("memberToDo")
+        var indexOfNext =
+            getGroupMemberNames(group)?.indexOf(memberOnTask)?.plus(1)
+        if (indexOfNext != null) {
+            if(indexOfNext >= getGroupMemberNames(group)?.size!!){
+                indexOfNext = 0
+            }
+        }
+        val nextName = indexOfNext?.let { bigUser.value?.memberPerGroup?.get(group)?.get(it) }
+
+
+        mFireStore.collection("groups").document(group)
+            .update("tasks", arrayRemove(getTasks(group)?.get(index)))
+            .addOnSuccessListener { Log.d(TAG, "Member of task successfully deleted") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+        if (nextName != null) {
+            getTasks(group)?.get(index)?.put("memberToDo",nextName)
+        }
+        if (nextName != null) {
+            val seconds1: Long = Timestamp.now().seconds
+            val addedSeconds1 = Instant.ofEpochSecond(seconds1).plus(7, ChronoUnit.DAYS).epochSecond
+            val newTimeStamp1 = Timestamp(addedSeconds1, 0)
+            val mapOfTask = hashMapOf(
+                "name" to (getTasks(group)?.get(index)?.get("name")),
+                "memberToDo" to nextName,
+                "timeCreated" to Timestamp.now(),
+                "timeDeadline" to newTimeStamp1
+            )
+
+            mFireStore.collection("groups").document(group)
+                .update("tasks", arrayUnion(mapOfTask))
+                    .addOnSuccessListener { Log.d(TAG, "Member of task successfully updated") }
+                    .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+        }
+
+
+
+    }
+
 }

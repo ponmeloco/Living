@@ -11,7 +11,7 @@ import de.living.R
 import java.text.SimpleDateFormat
 
 
-class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<HashMap<String, String>>) :
+class AdapterRecyclerViewTasks(private var userTasksList: ArrayList<HashMap<String, String>>) :
     RecyclerView.Adapter<AdapterRecyclerViewTasks.ViewHolder>() {
 
     private lateinit var mListener: OnItemClickListener
@@ -32,7 +32,7 @@ class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<HashMap<Stri
         // sets the text to the textview from our itemHolder class
         holder.textViewTask.text = tasks["name"]
         holder.textViewRotation.text = tasks["memberToDo"]
-        holder.textViewTill.text = tasks["till"]
+        holder.textViewTill.text = "till"
         val timeStampDeadline = tasks["timeDeadline"] as Timestamp
         val timestamp = tasks["timeCreated"] as Timestamp
         val milliseconds = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
@@ -59,7 +59,7 @@ class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<HashMap<Stri
         val textViewTask: TextView = itemView.findViewById(R.id.textViewTask)
         val textViewRotation: TextView = itemView.findViewById(R.id.textViewRotation)
         val textViewTimeRemaining: TextView = itemView.findViewById(R.id.textViewTimeRemaining)
-        val textViewTimeDeadline: TextView =itemView.findViewById(R.id.textViewTimeDeadline)
+        val textViewTimeDeadline: TextView = itemView.findViewById(R.id.textViewTimeDeadline)
         val textViewTill: TextView = itemView.findViewById(R.id.textViewTimeTill)
 
         init {
@@ -77,5 +77,10 @@ class AdapterRecyclerViewTasks(private val userTasksList: ArrayList<HashMap<Stri
 
     fun setOnItemClickListener(mListener: OnItemClickListener) {
         this.mListener = mListener
+    }
+
+    fun submitList(list: ArrayList<HashMap<String, String>>) {
+        userTasksList.clear()
+        userTasksList.addAll(list)
     }
 }

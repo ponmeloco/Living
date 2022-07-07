@@ -1,5 +1,6 @@
 package de.living.mainApp
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -24,12 +25,13 @@ class HomeFragment : Fragment() {
 
 
     private var _binding: FragmentHomeBinding? = null
-    private var selectedItem = 0
+    private var selectedItem = -1
+    private lateinit var adapter: AdapterRecyclerViewGroups
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-    private val _userDataViewModel: UserDataViewModel by activityViewModels()
+    private val viewModel: UserDataViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,24 +41,55 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
+        // getting the recyclerview by its id
+        val recyclerview = binding.listViewGroups
+        // this creates a vertical layout Manager
+        recyclerview.layoutManager = LinearLayoutManager(binding.listViewGroups.context)
+        // ArrayList of class ItemsViewModel
+        val data = ArrayList<String>()
+        viewModel.bigUser.value?.groupNames.let {
+            if (it != null) {
+                data.addAll(it)
+            }
+        }
+        // This will pass the ArrayList to our Adapter
+        adapter = AdapterRecyclerViewGroups(data)
+        adapter.setOnItemClickListener(object : AdapterRecyclerViewGroups.OnItemClickListener {
+            override fun setOnClickListener(pos: Int) {
+                if (recyclerview.getChildAt(pos).isActivated) {
+                    recyclerview.getChildAt(pos).isActivated = false
+                    selectedItem = -1
+                } else {
+                    if(selectedItem != -1) {
+                        recyclerview.getChildAt(selectedItem).isActivated = false
+                    }
+                    selectedItem = pos
+                    recyclerview.getChildAt(selectedItem).isActivated = true
+                }
+            }
+        })
+        // Setting the Adapter with the recyclerview
+        recyclerview.adapter = adapter
 
         val editTextViewName: EditText = binding.editTextViewYourName
         val editTextViewEmail: EditText = binding.editTextViewYourEmail
-        _userDataViewModel.getUser().observe(viewLifecycleOwner) {
-            editTextViewName.setText(_userDataViewModel.getUser().value?.name)
-            editTextViewEmail.setText(_userDataViewModel.getUser().value?.email)
+
+        viewModel.bigUser.observe(viewLifecycleOwner) {
+            editTextViewName.setText(it.name)
+            editTextViewEmail.setText(it.email)
         }
-        inflateRecyclerview()
 
         binding.YourNameEditButton.setOnClickListener {
             binding.YourNameEditButton.hideKeyboard()
-            _userDataViewModel.updateUserName(editTextViewName.text.toString())
-            _userDataViewModel.setUserName(editTextViewName.text.toString())
+            binding.editTextViewYourName.isEnabled = !binding.editTextViewYourName.isEnabled
         }
+
         binding.YourEmailEditButton.setOnClickListener {
             binding.YourEmailEditButton.hideKeyboard()
-            _userDataViewModel.updateUserEmail(editTextViewEmail.text.toString())
-            _userDataViewModel.setUserEmail(editTextViewEmail.text.toString())
+            binding.editTextViewYourName.isEnabled = !binding.editTextViewYourName.isEnabled
+            viewModel.setUserName(editTextViewName.text.toString())
+            viewModel.updateUserName(editTextViewName.text.toString())
+            Toast.makeText(activity, "New name set!", Toast.LENGTH_SHORT).show()
         }
 
         binding.createGroupButton.setOnClickListener {
@@ -64,40 +97,48 @@ class HomeFragment : Fragment() {
             val dialog =
                 EditTextDialog.newInstance(text = "", hint = "Group Name", isMultiline = false)
             dialog.onOk = {
-                _userDataViewModel.createGroup(dialog.editText.text)
-                _userDataViewModel.getUser().value?.let { it1 ->
-                    _userDataViewModel.createTask("test",
-                        it1.name,dialog.editText.text.toString())
-                }
-                inflateRecyclerview()
+                viewModel.createGroup(dialog.editText.text.toString())
+                data.add(dialog.editText.text.toString())
+                adapter.notifyDataSetChanged()
             }
             dialog.show(parentFragmentManager, "editDescription")
         }
+
         binding.leaveButton.setOnClickListener {
-            if (selectedItem != 0) {
-                buttonEffect(binding.leaveButton)
-                _userDataViewModel.leaveGroup(
-                    _userDataViewModel.getGroups().value?.groupNames?.get(
-                        selectedItem
-                    )
-                )
-                _userDataViewModel.getGroups().value?.groupNames?.removeAt(selectedItem)
-                inflateRecyclerview()
+            buttonEffect(binding.leaveButton)
+            if (selectedItem != -1) {
+                val alertDialog = AlertDialog.Builder(activity)
+                alertDialog.apply {
+                    setMessage("Do you want to leave the group?")
+                    setPositiveButton("Yes!") { _, _ ->
+                        viewModel.leaveGroup(viewModel.getGroups()?.get(selectedItem))
+                        if (selectedItem != -1) {
+                            viewModel.getGroups()?.removeAt(selectedItem)
+                            data.removeAt(selectedItem)
+                            adapter.notifyDataSetChanged()
+                            selectedItem = -1
+                        }
+                    }
+                    setNegativeButton("No!") { _, _ ->
+                    }
+                }.create().show()
             } else {
                 Toast.makeText(activity, "No group selected", Toast.LENGTH_SHORT).show()
             }
-            selectedItem = 0
         }
+
         binding.inviteButton.setOnClickListener {
             buttonEffect(binding.inviteButton)
-            if (selectedItem != 0) {
+            if (selectedItem != -1) {
                 val dialog =
                     EditTextDialog.newInstance(text = "", hint = "E-Mail", isMultiline = false)
                 dialog.onOk = {
-                    _userDataViewModel.getGroups().value?.groupNames?.let { it1 ->
-                        _userDataViewModel.addToGroup(
-                            it1[selectedItem], dialog.editText.text
-                        )
+                    viewModel.getGroups().let { it1 ->
+                        it1?.get(selectedItem)?.let { it2 ->
+                            viewModel.addToGroup(
+                                it2, dialog.editText.text.toString()
+                            )
+                        }
                     }
                 }
                 dialog.show(parentFragmentManager, "editDescription")
@@ -105,6 +146,7 @@ class HomeFragment : Fragment() {
                 Toast.makeText(activity, "No group selected", Toast.LENGTH_SHORT).show()
             }
         }
+
         binding.pendingInvitesButton.setOnClickListener {
             buttonEffect(binding.pendingInvitesButton)
         }
@@ -114,38 +156,6 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-
-    private fun inflateRecyclerview() {
-        // getting the recyclerview by its id
-        val recyclerview = binding.listViewGroups
-        // this creates a vertical layout Manager
-        recyclerview.layoutManager = LinearLayoutManager(binding.listViewGroups.context)
-
-        // ArrayList of class ItemsViewModel
-        val data = ArrayList<String>()
-        for (item in _userDataViewModel.getGroups().value?.groupNames!!) {
-            _userDataViewModel.getGroups().value!!.groupNames?.let { data.add(item) }
-        }
-
-        // This will pass the ArrayList to our Adapter
-        val adapter = AdapterRecyclerViewGroups(data)
-        adapter.setOnItemClickListener(object : AdapterRecyclerViewGroups.OnItemClickListener {
-            override fun setOnClickListener(pos: Int) {
-                if (recyclerview.getChildAt(pos).isActivated) {
-                    recyclerview.getChildAt(pos).isActivated = false
-                    selectedItem = 0
-                } else {
-                    recyclerview.getChildAt(selectedItem).isActivated = false
-                    selectedItem = pos
-                    recyclerview.getChildAt(selectedItem).isActivated = true
-                }
-            }
-        })
-
-        // Setting the Adapter with the recyclerview
-        recyclerview.adapter = adapter
     }
 
 
@@ -173,6 +183,4 @@ class HomeFragment : Fragment() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
-
-
 }

@@ -8,24 +8,18 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import de.living.R
 import de.living.databinding.ActivitySignUpBinding
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import java.util.*
 
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var binding: ActivitySignUpBinding
     private lateinit var db: FirebaseFirestore
-    private val mFireStore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +54,6 @@ class SignUpActivity : AppCompatActivity() {
                     "email" to email,
                     "uid" to uid,
                 )
-                val groupName: MutableMap<String, Any> = HashMap()
-                groupName["groupNames"] = listOf(email+"ownGroup")
                 if (uid != null) {
                     db.collection("users").document(email).set(user)
                         .addOnSuccessListener {
@@ -70,16 +62,6 @@ class SignUpActivity : AppCompatActivity() {
                         .addOnFailureListener { e ->
                             Log.w(TAG, "Error adding document", e)
                         }
-                    db.collection("users").document(email).collection("groups")
-                        .document("groupNames").set(groupName)
-
-                    groupName.clear()
-                    groupName["user"] = arrayListOf(email)
-
-                    db.collection("groups").document(email + "ownGroup").set(groupName)
-
-                    createTask("Your tasks",name,email+ "ownGroup")
-
                     Toast.makeText(this, "Successfully Singed Up", Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this@SignUpActivity, IntroActivity::class.java))
                     ActivityCompat.finishAffinity(this)
@@ -104,24 +86,5 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         binding.toolbarSignUpActivity.setNavigationOnClickListener { onBackPressed() }
-    }
-
-
-    private fun createTask(_task: String, _memberName: String, s: String) {
-        val seconds: Long = Timestamp.now().seconds
-        val addedSeconds = Instant.ofEpochSecond(seconds).plus(7, ChronoUnit.DAYS).epochSecond
-        val newTimeStamp = Timestamp(addedSeconds, 0)
-        val mapOfTask = hashMapOf(
-            "name" to _task,
-            "memberToDo" to _memberName,
-            "timeCreated" to Timestamp.now(),
-            "timeDeadline" to newTimeStamp
-        )
-
-
-        mFireStore.collection("groups").document(s)
-            .update("tasks", FieldValue.arrayUnion(mapOfTask))
-            .addOnSuccessListener { Log.d(TAG, "Task successfully created") }
-            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
     }
 }

@@ -18,18 +18,26 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="30dp">
 
-        <androidx.appcompat.widget.AppCompatEditText
+        <TextView
+            android:id="@+id/textViewName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:layout_gravity="center"
+            android:text="@string/name_colon" />
+
+        <EditText
             android:id="@+id/editTextViewYourName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:autofillHints="Your Name"
             android:backgroundTint="@color/mimosaYellow"
+            android:enabled="false"
             android:clickable="false"
             android:hint="@string/your_name"
             android:inputType="textPersonName"
             android:minHeight="48dp" />
-
 
         <Button
             android:id="@+id/YourNameEditButton"
@@ -38,6 +46,8 @@
             android:text="@string/edit"
             android:textAllCaps="false"
             tools:ignore="DuplicateSpeakableTextCheck,TouchTargetSizeCheck,TouchTargetSizeCheck" />
+
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -50,6 +60,14 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayoutYourName"
         tools:layout_editor_absoluteX="30dp">
 
+        <TextView
+            android:id="@+id/textViewEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:layout_gravity="center"
+            android:text="@string/email_colon" />
+
         <EditText
             android:id="@+id/editTextViewYourEmail"
             android:layout_width="wrap_content"
@@ -57,6 +75,7 @@
             android:layout_weight="1"
             android:autofillHints="Your Email"
             android:backgroundTint="@color/mimosaYellow"
+            android:enabled="false"
             android:clickable="false"
             android:hint="@string/your_email"
             android:inputType="textEmailAddress"
@@ -98,6 +117,7 @@
             android:layout_width="55dp"
             android:layout_height="50dp"
             android:layout_marginEnd="16dp"
+            android:visibility="gone"
             android:background="@drawable/email"
             android:contentDescription="@string/pending_email_invite"
             android:textAllCaps="false"
@@ -139,7 +159,7 @@
         android:layout_marginBottom="20dp"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent" >
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
             android:id="@+id/inviteButton"
@@ -172,34 +192,34 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-<!--    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/linearLayoutCleaningGroceries"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/cleaningButton"
+    <!--    <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linearLayoutCleaningGroceries"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:text="@string/cleaning"
-            android:textAllCaps="false"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/groceriesButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/groceries"
-            android:textAllCaps="false"
-            app:layout_constraintBottom_toTopOf="@+id/button13"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat" />
-    </androidx.appcompat.widget.LinearLayoutCompat>-->
+            <Button
+                android:id="@+id/cleaningButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/cleaning"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <Button
+                android:id="@+id/groceriesButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/groceries"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toTopOf="@+id/button13"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat" />
+        </androidx.appcompat.widget.LinearLayoutCompat>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,7 +20,6 @@ class SplashActivity : AppCompatActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
         auth = FirebaseAuth.getInstance()
-
         Handler(Looper.getMainLooper()).postDelayed({
             if (auth.currentUser != null) {
                 auth.currentUser?.reload()?.addOnCompleteListener { task ->
