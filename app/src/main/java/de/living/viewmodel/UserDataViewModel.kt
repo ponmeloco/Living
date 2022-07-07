@@ -66,7 +66,7 @@ class UserDataViewModel : ViewModel() {
 
     fun getTasksFromDatabase() {
         val docRef = mFireStore.collection("groups")
-            .whereArrayContains("user", bigUser.value?.email.toString())
+            .whereArrayContains("user", getCurrentUserEmail().toString())
         docRef.get()
             .addOnSuccessListener { document ->
                 Log.d(
