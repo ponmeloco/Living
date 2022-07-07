@@ -32,7 +32,7 @@ class AdapterRecyclerViewTasks(private var userTasksList: ArrayList<HashMap<Stri
         // sets the text to the textview from our itemHolder class
         holder.textViewTask.text = tasks["name"]
         holder.textViewRotation.text = tasks["memberToDo"]
-        holder.textViewTill.text = "till"
+        holder.textViewTill.text = "time to"
         val timeStampDeadline = tasks["timeDeadline"] as Timestamp
         val timestamp = tasks["timeCreated"] as Timestamp
         val milliseconds = timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
@@ -42,7 +42,6 @@ class AdapterRecyclerViewTasks(private var userTasksList: ArrayList<HashMap<Stri
         val netDate2 = java.util.Date(milliseconds2)
         val date1 = sdf.format(netDate).toString()
         val date2 = sdf.format(netDate2).toString()
-        Log.d("TAG170", date1)
         holder.textViewTimeDeadline.text = date2
         holder.textViewTimeRemaining.text = date1
 
