@@ -46,7 +46,7 @@ class CleaningFragment : Fragment() {
     ): View {
         _binding = FragmentCleaningBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
+        selectedItem = -1
         inflateGroupSpinner()
 
         // getting the recyclerview by its id
@@ -94,7 +94,6 @@ class CleaningFragment : Fragment() {
                                 selectedItem,
                                 binding.groupSpinner.selectedItem.toString()
                             )
-                            binding.groupSpinner.setSelection(0)
                             data.clear()
                             viewModel.getTasks(binding.groupSpinner.selectedItem.toString())
                                 ?.let { it1 -> data.addAll(it1) }
@@ -106,7 +105,7 @@ class CleaningFragment : Fragment() {
                     setNegativeButton("No!") { _, _ ->
                     }
                 }.create().show()
-            }
+            }else Toast.makeText(activity, "No task selected!", Toast.LENGTH_SHORT).show()
         }
 
         binding.markAsFinishedButton.setOnClickListener {
@@ -117,7 +116,6 @@ class CleaningFragment : Fragment() {
                     selectedItem,
                     binding.groupSpinner.selectedItem.toString()
                 )
-                binding.groupSpinner.setSelection(0)
                 data.clear()
                 viewModel.getTasks(binding.groupSpinner.selectedItem.toString())
                     ?.let { it1 -> data.addAll(it1) }
@@ -143,7 +141,7 @@ class CleaningFragment : Fragment() {
                         (groupName)
                     )
                 }
-                val memberOnTask = viewModel.getTasks(groupName)?.get(selectedItem)?.get("memberToDo")
+/*                val memberOnTask = viewModel.getTasks(groupName)?.get(selectedItem)?.get("memberToDo")
                 var indexOfNext =
                     viewModel.getGroupMemberNames(groupName)?.indexOf(memberOnTask)?.plus(1)
                 if (indexOfNext != null) {
@@ -151,24 +149,22 @@ class CleaningFragment : Fragment() {
                         indexOfNext = 0
                     }
                 }
-                val nextName = indexOfNext?.let { viewModel.bigUser.value?.memberPerGroup?.get(groupName)?.get(it) } as String
+                val nextName = indexOfNext?.let { viewModel.bigUser.value?.memberPerGroup?.get(groupName)?.get(it) } as String*/
                 val seconds1: Long = Timestamp.now().seconds
                 val addedSeconds1 = Instant.ofEpochSecond(seconds1).plus(7, ChronoUnit.DAYS).epochSecond
                 val newTimeStamp1 = Timestamp(addedSeconds1, 0)
                 val mapOfTask = hashMapOf(
                     "name" to taskName,
-                    "memberToDo" to nextName,
+                    "memberToDo" to (viewModel.bigUser.value?.email),
                     "timeCreated" to Timestamp.now(),
                     "timeDeadline" to newTimeStamp1
                 )
                 data.add(mapOfTask as HashMap<String,String>)
                 adapterRecyclerViewTasks.notifyDataSetChanged()
-                binding.groupSpinner.setSelection(0)
             }
             dialog.show(parentFragmentManager, "editDescription")
         }
 
-        binding.groupSpinner.setSelection(0)
         binding.groupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>,
@@ -206,7 +202,6 @@ class CleaningFragment : Fragment() {
             }
             spinner.adapter = arrayAdapterSpinner
             binding.groupSpinner.setSelection(0)
-            selectedItem = 0
         }
 
 
