@@ -26,14 +26,12 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
         val navController = navHostFragment.navController
         navView.setupWithNavController(navController)
-        val job = CoroutineScope(Dispatchers.IO).launchPeriodicAsync(10000) {
+        val job = CoroutineScope(Dispatchers.IO).launchPeriodicAsync(2000) {
             init()
         }
         job.start()
 
-
     }
-
 
     private fun CoroutineScope.launchPeriodicAsync(
         repeatMillis: Long,

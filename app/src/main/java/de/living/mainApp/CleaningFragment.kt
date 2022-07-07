@@ -1,6 +1,7 @@
 package de.living.mainApp
 
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -83,19 +84,28 @@ class CleaningFragment : Fragment() {
         binding.editTaskButton.setOnClickListener {
             buttonEffect(binding.markAsFinishedButton)
             if (selectedItem != -1) {
-                recyclerview.getChildAt(selectedItem).isActivated = false
-                viewModel.deleteTask(
-                    selectedItem,
-                    binding.groupSpinner.selectedItem.toString()
-                )
-                binding.groupSpinner.setSelection(0)
-                data.clear()
-                viewModel.getTasks(binding.groupSpinner.selectedItem.toString())
-                    ?.let { it1 -> data.addAll(it1) }
-                adapterRecyclerViewTasks.notifyDataSetChanged()
-
-                selectedItem = -1
-                Toast.makeText(activity, "Task deleted!", Toast.LENGTH_SHORT).show()
+                val alertDialog = AlertDialog.Builder(activity)
+                alertDialog.apply {
+                    setMessage("Do you want to delete the task?")
+                    setPositiveButton("Yes!") { _, _ ->
+                        if (selectedItem != -1) {
+                            recyclerview.getChildAt(selectedItem).isActivated = false
+                            viewModel.deleteTask(
+                                selectedItem,
+                                binding.groupSpinner.selectedItem.toString()
+                            )
+                            binding.groupSpinner.setSelection(0)
+                            data.clear()
+                            viewModel.getTasks(binding.groupSpinner.selectedItem.toString())
+                                ?.let { it1 -> data.addAll(it1) }
+                            adapterRecyclerViewTasks.notifyDataSetChanged()
+                            selectedItem = -1
+                            Toast.makeText(activity, "Task deleted!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                    setNegativeButton("No!") { _, _ ->
+                    }
+                }.create().show()
             }
         }
 
@@ -166,11 +176,11 @@ class CleaningFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                viewModel.getTasks(binding.groupSpinner.getItemAtPosition(position).toString())
-                    ?.let { adapterRecyclerViewTasks.submitList(it) }
+                data.clear()
+                viewModel.getTasks((binding.groupSpinner.getItemAtPosition(position).toString()))
+                    ?.let { data.addAll(it) }
                 binding.recyclerViewTasks.adapter?.notifyDataSetChanged()
             }
-
             override fun onNothingSelected(parent: AdapterView<*>) {
                 binding.groupSpinner.setSelection(selectedItem)
             }
